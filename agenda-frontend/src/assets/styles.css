@@ -1,37 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');
+/* ============================================================
+   STYLES.CSS — Componentes reutilizables para el SPA Vue
+   Reset, variables y tokens están en base.css (importado en main.js)
+   ============================================================ */
 
-*,
-*::before,
-*::after {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-html {
-    font-size: 16px;
-    scroll-behavior: smooth;
-}
-
-body {
-    font-family: 'Inter', sans-serif;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    background: linear-gradient(135deg, #e0f2ff 0%, #f5fbff 100%);
-    background-size: 300% 300%;
-    animation: gradientShift 12s ease infinite;
-    color: #1a2a4a;
-    padding: 6rem 0 0 0;
-    margin: 0;
-}
-
-@keyframes gradientShift {
-    0%   { background-position: 0% 50%; }
-    50%  { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
 
 /* ---------- CARD ---------- */
 .card {
@@ -1276,8 +1247,7 @@ body {
     transform: translateY(0);
 }
 
----------------------------------------------------
-
+/* ---------- BARRA DE BUSQUEDA (página contactos) ---------- */
 
 
 .search-bar {
@@ -1370,4 +1340,68 @@ body {
 .btn-clear:hover {
     background: rgba(0, 68, 255, 0.08);
     color: #0044FF;
+}
+
+/* ============================================================
+   TRANSICIONES VUE — usar con <Transition name="...">
+   ============================================================ */
+
+/* --- Fade (para modales, overlays) --- */
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity var(--duration-base) ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
+
+/* --- Slide Up (para páginas / cards) --- */
+.slide-up-enter-active {
+    transition: all var(--duration-slow) var(--ease-spring);
+}
+.slide-up-leave-active {
+    transition: all var(--duration-base) ease;
+}
+.slide-up-enter-from {
+    opacity: 0;
+    transform: translateY(30px) scale(.97);
+}
+.slide-up-leave-to {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+/* --- Modal (scale + fade) --- */
+.modal-enter-active {
+    transition: all .35s var(--ease-spring);
+}
+.modal-leave-active {
+    transition: all var(--duration-base) ease;
+}
+.modal-enter-from {
+    opacity: 0;
+    transform: scale(.85) translateY(20px);
+}
+.modal-leave-to {
+    opacity: 0;
+    transform: scale(.95);
+}
+
+/* ============================================================
+   UTILIDADES
+   ============================================================ */
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.text-center { text-align: center; }
+
+.container {
+    width: 100%;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
 }

@@ -1,86 +1,136 @@
-/* color palette from <https://github.com/vuejs/theme> */
+/* ============================================================
+   BASE.CSS — Reset + CSS Custom Properties (Design Tokens)
+   Importado globalmente en main.js → disponible en todo el SPA
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');
+
+/* ---------- VARIABLES / DESIGN TOKENS ---------- */
 :root {
-  --vt-c-white: #ffffff;
-  --vt-c-white-soft: #f8f8f8;
-  --vt-c-white-mute: #f2f2f2;
+  /* Tipografía */
+  --font-primary: 'Inter', sans-serif;
+  --font-display: 'Outfit', 'Inter', sans-serif;
 
-  --vt-c-black: #181818;
-  --vt-c-black-soft: #222222;
-  --vt-c-black-mute: #282828;
+  /* Colores principales */
+  --color-primary:       #0044FF;
+  --color-primary-light: #3388FF;
+  --color-primary-lighter:#55AAFF;
+  --color-accent:        #77CCFF;
+  --color-danger:        #ff3b3b;
+  --color-danger-light:  #ff6b6b;
 
-  --vt-c-indigo: #2c3e50;
+  /* Textos */
+  --color-text:          #1a2a4a;
+  --color-text-secondary:#3a5a8a;
+  --color-text-muted:    #7a9cc6;
+  --color-text-on-primary:#ffffff;
+  --color-text-on-primary-soft:#e0ecff;
+  --color-text-on-primary-muted:#b8daff;
+  --color-label:         #f9f9f9;
 
-  --vt-c-divider-light-1: rgba(60, 60, 60, 0.29);
-  --vt-c-divider-light-2: rgba(60, 60, 60, 0.12);
-  --vt-c-divider-dark-1: rgba(84, 84, 84, 0.65);
-  --vt-c-divider-dark-2: rgba(84, 84, 84, 0.48);
+  /* Fondos */
+  --bg-gradient:         linear-gradient(135deg, #e0f2ff 0%, #f5fbff 100%);
+  --bg-primary:          linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+  --bg-card:             linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+  --bg-glass:            rgba(255, 255, 255, 0.65);
+  --bg-glass-hover:      rgba(255, 255, 255, 0.7);
+  --bg-field:            rgba(255, 255, 255, 0.07);
+  --bg-field-focus:      rgba(255, 255, 255, 0.12);
 
-  --vt-c-text-light-1: var(--vt-c-indigo);
-  --vt-c-text-light-2: rgba(60, 60, 60, 0.66);
-  --vt-c-text-dark-1: var(--vt-c-white);
-  --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
+  /* Bordes */
+  --border-glass:        1px solid rgba(255, 255, 255, 0.18);
+  --border-field:        1.5px solid rgba(119, 204, 255, 0.25);
+  --border-table:        1px solid rgba(255, 255, 255, 0.4);
+
+  /* Radios */
+  --radius-sm:  8px;
+  --radius-md:  10px;
+  --radius-lg:  12px;
+  --radius-xl:  16px;
+  --radius-2xl: 18px;
+  --radius-3xl: 20px;
+
+  /* Sombras */
+  --shadow-card:    0 8px 32px rgba(0, 0, 80, 0.35), inset 0 0 60px rgba(85, 170, 255, 0.06);
+  --shadow-btn:     0 4px 18px rgba(0, 68, 255, 0.35);
+  --shadow-btn-hover:0 6px 24px rgba(0, 68, 255, 0.5);
+  --shadow-glass:   0 4px 24px rgba(0, 0, 80, 0.08);
+  --shadow-avatar:  0 2px 10px rgba(0, 0, 80, 0.1);
+
+  /* Transiciones */
+  --ease-spring:   cubic-bezier(.22, 1, .36, 1);
+  --ease-smooth:   cubic-bezier(.4, 0, .2, 1);
+  --duration-fast:  .2s;
+  --duration-base:  .3s;
+  --duration-slow:  .6s;
+
+  /* Z-index capas */
+  --z-header:  1000;
+  --z-sidebar-overlay: 1050;
+  --z-sidebar: 1080;
+  --z-sidebar-toggle: 1100;
+  --z-modal:   2000;
 }
 
-/* semantic color variables for this project */
-:root {
-  --color-background: var(--vt-c-white);
-  --color-background-soft: var(--vt-c-white-soft);
-  --color-background-mute: var(--vt-c-white-mute);
-
-  --color-border: var(--vt-c-divider-light-2);
-  --color-border-hover: var(--vt-c-divider-light-1);
-
-  --color-heading: var(--vt-c-text-light-1);
-  --color-text: var(--vt-c-text-light-1);
-
-  --section-gap: 160px;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-background: var(--vt-c-black);
-    --color-background-soft: var(--vt-c-black-soft);
-    --color-background-mute: var(--vt-c-black-mute);
-
-    --color-border: var(--vt-c-divider-dark-2);
-    --color-border-hover: var(--vt-c-divider-dark-1);
-
-    --color-heading: var(--vt-c-text-dark-1);
-    --color-text: var(--vt-c-text-dark-2);
-  }
-}
-
+/* ---------- RESET ---------- */
 *,
 *::before,
 *::after {
-  box-sizing: border-box;
   margin: 0;
-  font-weight: normal;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
 }
 
 body {
+  font-family: var(--font-primary);
   min-height: 100vh;
   color: var(--color-text);
-  background: var(--color-background);
-  transition:
-    color 0.5s,
-    background-color 0.5s;
-  line-height: 1.6;
-  font-family:
-    Inter,
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    Oxygen,
-    Ubuntu,
-    Cantarell,
-    'Fira Sans',
-    'Droid Sans',
-    'Helvetica Neue',
-    sans-serif;
-  font-size: 15px;
-  text-rendering: optimizeLegibility;
+  background: var(--bg-gradient);
+  background-size: 300% 300%;
+  animation: gradientShift 12s ease infinite;
+  margin: 0;
+  padding: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* ---------- #app (SPA root) ---------- */
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding-top: 5rem;  /* espacio para header fijo */
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+button {
+  font-family: var(--font-primary);
+  cursor: pointer;
+}
+
+/* ---------- ANIMACION FONDO ---------- */
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
