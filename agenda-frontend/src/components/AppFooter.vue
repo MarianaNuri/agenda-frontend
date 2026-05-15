@@ -6,14 +6,9 @@
     <div class="footer-content">
       <p>Agenda de Contactos</p>
       <ul>
-        <li>
-          <i class="fa-solid fa-envelope"></i>
-          contacto@agenda.com
-        </li>
-        <li>
-          <i class="fa-solid fa-phone"></i>
-          +52 123 456 7890
-        </li>
+        <li><i class="bi bi-person-circle"></i>Yazmin Guadalupe Chacón Hernandez</li>
+        <li><i class="bi bi-person-circle"></i>Mariana Chávez Nuricumbo</li>
+        <li><i class="bi bi-person-circle"></i>Eva del Carmen González Santiz</li>
       </ul>
     </div>
   </footer>
