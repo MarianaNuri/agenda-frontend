@@ -1,6 +1,13 @@
 <script setup>
+/**
+ * components/ContactForm.vue
+ *
+ * Formulario reutilizable para crear y editar contactos.
+ * Incluye validación, subida de foto con preview, y estados de carga/error.
+ */
 import { ref, watch } from 'vue'
 import { RouterLink } from 'vue-router'
+import { required, email as emailValidator, phone, validateAll } from '@/utils/validators'
 
 const props = defineProps({
   /** Título del formulario (ej: "Crear Contacto", "Editar Contacto") */
@@ -10,7 +17,11 @@ const props = defineProps({
   /** Texto del botón submit */
   textoBoton: { type: String, default: 'Guardar' },
   /** Indica si se está procesando */
-  loading: { type: Boolean, default: false }
+  loading: { type: Boolean, default: false },
+  /** Mensaje de error del store */
+  error: { type: String, default: '' },
+  /** Mensaje de éxito del store */
+  successMessage: { type: String, default: '' },
 })
 
 const emit = defineEmits(['submit'])
@@ -21,10 +32,12 @@ const form = ref({
   email: '',
   direccion: '',
   notas: '',
-  foto: null
+  foto: null,
 })
 
 const fileName = ref('')
+const fotoPreview = ref('')
+const localError = ref('')
 
 /* Cargar datos iniciales (modo edición) */
 watch(
@@ -37,7 +50,13 @@ watch(
         email: val.email || '',
         direccion: val.direccion || '',
         notas: val.notas || '',
-        foto: null
+        foto: null,
+      }
+      // Si el contacto tiene foto existente, mostrar preview
+      if (val.foto) {
+        fotoPreview.value = val.foto.startsWith('http')
+          ? val.foto
+          : val.foto // Se resolverá con la URL base en la vista padre
       }
     }
   },
@@ -49,10 +68,30 @@ function onFileChange(e) {
   if (file) {
     form.value.foto = file
     fileName.value = file.name
+    // Crear preview local
+    const reader = new FileReader()
+    reader.onload = (ev) => {
+      fotoPreview.value = ev.target.result
+    }
+    reader.readAsDataURL(file)
   }
 }
 
 function handleSubmit() {
+  localError.value = ''
+
+  // Validaciones
+  const validationError = validateAll([
+    required(form.value.nombre, 'El nombre'),
+    emailValidator(form.value.email),
+    phone(form.value.telefono),
+  ])
+
+  if (validationError) {
+    localError.value = validationError
+    return
+  }
+
   emit('submit', { ...form.value })
 }
 </script>
@@ -60,6 +99,23 @@ function handleSubmit() {
 <template>
   <div class="card" id="contact-form-card">
     <h2>{{ titulo }}</h2>
+
+    <!-- Mensajes de feedback -->
+    <Transition name="slide-up">
+      <p v-if="successMessage" class="detail-label" style="color: #51cf66; text-align: center; margin-bottom: 1rem; text-transform: none; letter-spacing: 0;">
+        <i class="fa-solid fa-circle-check"></i> {{ successMessage }}
+      </p>
+    </Transition>
+    <Transition name="slide-up">
+      <p v-if="localError || error" class="detail-label" style="color: #ff6b6b; text-align: center; margin-bottom: 1rem; text-transform: none; letter-spacing: 0;">
+        <i class="fa-solid fa-circle-exclamation"></i> {{ localError || error }}
+      </p>
+    </Transition>
+
+    <!-- Preview de foto -->
+    <div v-if="fotoPreview" class="detail-photo" style="margin-bottom: 1rem;">
+      <img :src="fotoPreview" alt="Preview de foto" style="max-width: 130px; max-height: 130px; border-radius: 50%; object-fit: cover;" />
+    </div>
 
     <form @submit.prevent="handleSubmit">
       <!-- Nombre -->
@@ -134,7 +190,10 @@ function handleSubmit() {
 
       <!-- Botón -->
       <button type="submit" class="btn-submit" id="btn-form-submit" :disabled="loading">
-        <span>{{ loading ? 'Guardando...' : textoBoton }}</span>
+        <span v-if="loading">
+          <i class="fa-solid fa-spinner fa-spin"></i> Guardando...
+        </span>
+        <span v-else>{{ textoBoton }}</span>
       </button>
     </form>
 

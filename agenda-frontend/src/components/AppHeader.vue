@@ -1,9 +1,18 @@
 <script setup>
-import { ref, computed } from 'vue'
+/**
+ * components/AppHeader.vue
+ *
+ * Header de la aplicación con navegación sensible a la autenticación.
+ * Muestra opciones de login/registro cuando no hay sesión
+ * y las opciones protegidas cuando el usuario está autenticado.
+ */
+import { ref } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 
 const emit = defineEmits(['toggle-sidebar'])
 const router = useRouter()
+const auth = useAuthStore()
 
 const searchQuery = ref('')
 
@@ -11,6 +20,11 @@ function handleSearch() {
   if (searchQuery.value.trim()) {
     router.push({ name: 'agenda', query: { q: searchQuery.value.trim() } })
   }
+}
+
+async function handleLogout() {
+  await auth.logout()
+  router.push('/login')
 }
 </script>
 
@@ -35,8 +49,8 @@ function handleSearch() {
         <RouterLink to="/">Agenda de Contactos</RouterLink>
       </h1>
 
-      <!-- Barra de búsqueda -->
-      <div class="header-search-bar">
+      <!-- Barra de búsqueda (solo si autenticado) -->
+      <div v-if="auth.isAuthenticated" class="header-search-bar">
         <div class="header-search-wrapper">
           <i class="fa-solid fa-magnifying-glass"></i>
           <input
@@ -60,8 +74,16 @@ function handleSearch() {
       <!-- Nav desktop -->
       <nav class="header-nav-desktop">
         <RouterLink to="/">Inicio</RouterLink>
-        <RouterLink to="/agenda">Contactos</RouterLink>
-        <RouterLink to="/crear">Nuevo</RouterLink>
+        <template v-if="auth.isAuthenticated">
+          <RouterLink to="/agenda">Contactos</RouterLink>
+          <RouterLink to="/crear">Nuevo</RouterLink>
+          <RouterLink to="/perfil">Perfil</RouterLink>
+          <a href="#" @click.prevent="handleLogout" style="cursor: pointer;">Salir</a>
+        </template>
+        <template v-else>
+          <RouterLink to="/login">Entrar</RouterLink>
+          <RouterLink to="/registro">Registro</RouterLink>
+        </template>
       </nav>
     </div>
   </header>

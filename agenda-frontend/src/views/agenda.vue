@@ -1,18 +1,40 @@
 <script setup>
+/**
+ * views/agenda.vue
+ *
+ * Vista principal de contactos.
+ * Carga los contactos del backend al montar el componente.
+ * Incluye búsqueda, eliminación con confirmación y mensajes de feedback.
+ */
 import { ref, onMounted } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 import { useContactStore } from '@/stores/contact'
+import { useAuthStore } from '@/stores/auth'
+import { getApiUrl } from '@/config/api'
 import DeleteModal from '@/components/DeleteModal.vue'
 
 const store = useContactStore()
+const auth = useAuthStore()
 const route = useRoute()
 
 const localSearch = ref('')
 const contactToDelete = ref(null)
 const showDeleteModal = ref(false)
+const photoBaseUrl = ref('')
 
-/* Tomar query param si viene del header */
-onMounted(() => {
+/* Cargar contactos del backend al montar */
+onMounted(async () => {
+  // Obtener la URL base para las fotos
+  try {
+    photoBaseUrl.value = await getApiUrl()
+  } catch {
+    photoBaseUrl.value = ''
+  }
+
+  // Cargar contactos
+  await store.fetchContacts()
+
+  // Tomar query param si viene del header
   if (route.query.q) {
     localSearch.value = route.query.q
     store.setSearch(route.query.q)
@@ -28,15 +50,28 @@ function clearSearch() {
   store.setSearch('')
 }
 
+/**
+ * Construye la URL de la foto de un contacto.
+ * Si el contacto tiene foto del backend, construye la URL completa.
+ * Si no, usa ui-avatars como fallback.
+ */
+function getContactPhotoUrl(contact) {
+  if (contact.foto) {
+    if (contact.foto.startsWith('http')) return contact.foto
+    return `${photoBaseUrl.value}/${contact.foto.replace(/^\/+/, '')}`
+  }
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent(contact.nombre)}&background=0044FF&color=fff&size=52`
+}
+
 /* Delete flow */
 function askDelete(contact) {
   contactToDelete.value = contact
   showDeleteModal.value = true
 }
 
-function confirmDelete() {
+async function confirmDelete() {
   if (contactToDelete.value) {
-    store.deleteContact(contactToDelete.value.id)
+    await store.deleteContact(contactToDelete.value.id)
   }
   showDeleteModal.value = false
   contactToDelete.value = null
@@ -50,6 +85,18 @@ function cancelDelete() {
 
 <template>
   <div class="contacts-container" id="agenda-view">
+    <!-- Mensajes de feedback -->
+    <Transition name="slide-up">
+      <p v-if="store.successMessage" class="detail-label" style="color: #51cf66; text-align: center; margin-bottom: 1rem; text-transform: none; letter-spacing: 0; background: rgba(81, 207, 102, 0.1); padding: 0.75rem 1rem; border-radius: 10px;">
+        <i class="fa-solid fa-circle-check"></i> {{ store.successMessage }}
+      </p>
+    </Transition>
+    <Transition name="slide-up">
+      <p v-if="store.error" class="detail-label" style="color: #ff6b6b; text-align: center; margin-bottom: 1rem; text-transform: none; letter-spacing: 0; background: rgba(255, 107, 107, 0.1); padding: 0.75rem 1rem; border-radius: 10px;">
+        <i class="fa-solid fa-circle-exclamation"></i> {{ store.error }}
+      </p>
+    </Transition>
+
     <!-- Header -->
     <div class="contacts-header">
       <h2 class="contacts-title">
@@ -84,8 +131,14 @@ function cancelDelete() {
       >Limpiar</a>
     </div>
 
+    <!-- Loading -->
+    <div v-if="store.loading" class="contacts-empty" id="loading-state">
+      <i class="fa-solid fa-spinner fa-spin" style="font-size: 3rem; color: #55AAFF;"></i>
+      <p>Cargando contactos...</p>
+    </div>
+
     <!-- Estado vacío -->
-    <div v-if="store.filteredContacts.length === 0" class="contacts-empty" id="empty-state">
+    <div v-else-if="store.filteredContacts.length === 0" class="contacts-empty" id="empty-state">
       <i class="fa-solid fa-user-slash" style="font-size: 3rem; color: #55AAFF;"></i>
       <p v-if="store.searchQuery">No se encontraron contactos para "{{ store.searchQuery }}".</p>
       <p v-else>Aún no tienes contactos. ¡Agrega el primero!</p>
@@ -96,7 +149,7 @@ function cancelDelete() {
       </RouterLink>
     </div>
 
-    <!-- Tabla de contactos (desktop = tabla, mobile = cards vía CSS) -->
+    <!-- Tabla de contactos -->
     <div v-else class="contacts-table-wrapper" id="contacts-table-wrapper">
       <table class="contacts-table" id="contacts-table">
         <thead>
@@ -113,7 +166,7 @@ function cancelDelete() {
             <td data-label="">
               <div class="contact-avatar">
                 <img
-                  :src="contact.foto || `https://ui-avatars.com/api/?name=${encodeURIComponent(contact.nombre)}&background=0044FF&color=fff&size=52`"
+                  :src="getContactPhotoUrl(contact)"
                   :alt="contact.nombre"
                 />
               </div>
