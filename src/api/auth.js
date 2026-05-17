@@ -30,7 +30,7 @@ export async function loginService(email, password) {
  * @returns {Promise<Object>} { token, user, message }
  */
 export async function registerService(nombre, email, password) {
-  const data = await apiRequest('/auth/register.php', {
+  const data = await apiRequest('/auth/registrar.php', {
     method: 'POST',
     body: { nombre, email, password },
     auth: false,
@@ -43,7 +43,7 @@ export async function registerService(nombre, email, password) {
  * @returns {Promise<Object>} { user }
  */
 export async function getMeService() {
-  const data = await apiRequest('/auth/me.php', {
+  const data = await apiRequest('/auth/perfil.php', {
     method: 'GET',
     auth: true,
   })
@@ -75,7 +75,7 @@ export async function updateProfileService(profileData) {
     formData.append('email', profileData.email)
     formData.append('foto', profileData.foto)
 
-    const data = await apiRequest('/auth/update.php', {
+    const data = await apiRequest('/auth/editar.php', {
       method: 'POST',
       body: formData,
       auth: true,
@@ -84,7 +84,7 @@ export async function updateProfileService(profileData) {
   }
 
   // Sin foto, enviar JSON
-  const data = await apiRequest('/auth/update.php', {
+  const data = await apiRequest('/auth/editar.php', {
     method: 'POST',
     body: {
       nombre: profileData.nombre,
