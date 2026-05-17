@@ -1,11 +1,5 @@
 <script setup>
-/**
- * components/AppHeader.vue
- *
- * Header de la aplicación con navegación sensible a la autenticación.
- * Muestra opciones de login/registro cuando no hay sesión
- * y las opciones protegidas cuando el usuario está autenticado.
- */
+
 import { ref } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'

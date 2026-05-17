@@ -1,9 +1,3 @@
-/* ============================================================
-   STYLES.CSS — Componentes reutilizables para el SPA Vue
-   Reset, variables y tokens están en base.css (importado en main.js)
-   ============================================================ */
-
-
 /* ---------- CARD ---------- */
 .card {
     width: 100%;

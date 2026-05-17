@@ -1,10 +1,5 @@
 <script setup>
-/**
- * components/ContactForm.vue
- *
- * Formulario reutilizable para crear y editar contactos.
- * Incluye validación, subida de foto con preview, y estados de carga/error.
- */
+
 import { ref, watch } from 'vue'
 import { RouterLink } from 'vue-router'
 import { required, email as emailValidator, phone, validateAll } from '@/utils/validators'

@@ -1,10 +1,5 @@
 <script setup>
-/**
- * components/AppSidebar.vue
- *
- * Sidebar lateral con navegación sensible a la autenticación.
- * Muestra opciones diferentes según el estado de la sesión.
- */
+
 import { RouterLink, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
