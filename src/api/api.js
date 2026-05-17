@@ -76,8 +76,8 @@ export async function apiRequest(endpoint, {
         localStorage.removeItem('auth_token')
         localStorage.removeItem('auth_user')
         // Redirigir al login si no estamos ya ahí
-        if (window.location.pathname !== '/login') {
-          window.location.href = '/login'
+        if (window.location.pathname !== `${import.meta.env.BASE_URL}login`) {
+          window.location.href = `${import.meta.env.BASE_URL}login`
         }
       }
 
