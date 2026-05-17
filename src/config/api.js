@@ -16,7 +16,7 @@ export async function getApiUrl() {
   if (cachedApiUrl) return cachedApiUrl
 
   try {
-    const response = await fetch('/config.json')
+    const response = await fetch('/agenda-frontend/config.json')
     if (!response.ok) {
       throw new Error(`No se pudo cargar config.json (HTTP ${response.status})`)
     }
