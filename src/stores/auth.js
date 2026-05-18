@@ -10,36 +10,32 @@ import {
 import { getApiUrl } from '@/config/api'
 
 export const useAuthStore = defineStore('auth', () => {
-  /* ---------- State ---------- */
-  const user = ref(JSON.parse(localStorage.getItem('auth_user') || 'null'))
-  const token = ref(localStorage.getItem('auth_token') || '')
-  const loading = ref(false)
-  const error = ref('')
-  const successMessage = ref('')
+ /* ---------- State ---------- */
+// Eliminamos la lectura del auth_token
+const user = ref(JSON.parse(localStorage.getItem('auth_user') || 'null'))
+const loading = ref(false)
+const error = ref('')
+const successMessage = ref('')
 
-  /* ---------- Getters ---------- */
-  const isAuthenticated = computed(() => !!token.value)
-  const userName = computed(() => user.value?.nombre_de_usuario || 'Usuario')
-  //const userEmail = computed(() => user.value?.email || '')
-  const userPhoto = computed(() => user.value?.foto || null)
+/* ---------- Getters ---------- */
+// Ahora estás autenticado SI existe el objeto user en el estado
+const isAuthenticated = computed(() => !!user.value)
+const userName = computed(() => user.value?.nombre_de_usuario || 'Usuario')
+const userPhoto = computed(() => user.value?.foto || null)
 
   /* ---------- Helpers privados ---------- */
 
-  /** Guarda token y usuario en localStorage y en el state */
-  function _setSession(newToken, newUser) {
-    token.value = newToken
-    user.value = newUser
-    localStorage.setItem('auth_token', newToken)
-    localStorage.setItem('auth_user', JSON.stringify(newUser))
-  }
+  /** Guarda el usuario en localStorage y en el state */
+function _setSession(newUser) {
+  user.value = newUser
+  localStorage.setItem('auth_user', JSON.stringify(newUser))
+}
 
-  /** Limpia la sesión */
-  function _clearSession() {
-    token.value = ''
-    user.value = null
-    localStorage.removeItem('auth_token')
-    localStorage.removeItem('auth_user')
-  }
+/** Limpia la sesión */
+function _clearSession() {
+  user.value = null
+  localStorage.removeItem('auth_user')
+}
 
   /** Limpia mensajes después de un tiempo */
   function _autoClearMessages(delayMs = 5000) {
@@ -64,7 +60,8 @@ export const useAuthStore = defineStore('auth', () => {
 
     try {
       const data = await loginService(nombre_de_usuario, password)
-      _setSession(data.token, data.user)
+      // Pasamos directamente el objeto user que mandó PHP
+      _setSession(data.user) 
       successMessage.value = data.message || '¡Bienvenido!'
       _autoClearMessages()
       return true
@@ -77,13 +74,6 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  /**
-   * Registrar nuevo usuario.
-   * @param {string} nombre_de_usuario
-
-   * @param {string} password
-   * @returns {Promise<boolean>} true si registro exitoso
-   */
   async function register(nombre_de_usuario, password) {
     loading.value = true
     error.value = ''
@@ -91,7 +81,8 @@ export const useAuthStore = defineStore('auth', () => {
 
     try {
       const data = await registerService(nombre_de_usuario, password)
-      _setSession(data.token, data.user)
+      // Al registrarse con éxito, le iniciamos sesión guardando su usuario
+      _setSession(data.user) 
       successMessage.value = data.message || '¡Cuenta creada con éxito!'
       _autoClearMessages()
       return true
@@ -125,21 +116,8 @@ export const useAuthStore = defineStore('auth', () => {
    * @returns {Promise<boolean>} true si el token es válido
    */
   async function fetchUser() {
-    if (!token.value) return false
-
-    loading.value = true
-    try {
-      const data = await getMeService()
-      user.value = data.user || data
-      localStorage.setItem('auth_user', JSON.stringify(user.value))
-      return true
-    } catch {
-      // Token inválido o expirado
-      _clearSession()
-      return false
-    } finally {
-      loading.value = false
-    }
+    // Si hay un usuario en el estado, asumimos que la sesión sigue activa localmente
+    return !!user.value
   }
 
   /**
@@ -192,7 +170,6 @@ export const useAuthStore = defineStore('auth', () => {
   return {
     // State
     user,
-    token,
     loading,
     error,
     successMessage,
