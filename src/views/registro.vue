@@ -20,7 +20,7 @@ import {
 const auth = useAuthStore()
 const router = useRouter()
 
-const nombre = ref('')
+const nombre_de_usuario = ref('')
 const email = ref('')
 const password = ref('')
 const confirmPassword = ref('')
@@ -31,7 +31,7 @@ async function handleRegister() {
 
   // Validaciones del formulario
   const validationError = validateAll([
-    required(nombre.value, 'El nombre'),
+    required(nombre_de_usuario.value, 'El nombre_de_usuario'),
     required(email.value, 'El email'),
     emailValidator(email.value),
     required(password.value, 'La contraseña'),
@@ -45,7 +45,7 @@ async function handleRegister() {
   }
 
   // Llamar al backend
-  const success = await auth.register(nombre.value, email.value, password.value)
+  const success = await auth.register(nombre_de_usuario.value, email.value, password.value)
 
   if (success) {
     router.push('/agenda')
@@ -71,12 +71,12 @@ async function handleRegister() {
 
     <form @submit.prevent="handleRegister">
       <div class="form-group">
-        <label for="reg-nombre">Nombre</label>
+        <label for="reg-nombre_de_usuario">Nombre de usuario</label>
         <input
-          v-model="nombre"
+          v-model="nombre_de_usuario"
           type="text"
           id="reg-nombre"
-          placeholder="Tu nombre completo"
+          placeholder="Tu nombre de usuario"
           required
         />
       </div>

@@ -9,13 +9,12 @@
 import { ref } from 'vue'
 import { RouterLink, useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { required, email as emailValidator, minLength, validateAll } from '@/utils/validators'
 
 const auth = useAuthStore()
 const router = useRouter()
 const route = useRoute()
 
-const email = ref('')
+const nombre_de_usuario = ref('')
 const password = ref('')
 const localError = ref('')
 
@@ -24,8 +23,7 @@ async function handleLogin() {
 
   // Validaciones del formulario
   const validationError = validateAll([
-    required(email.value, 'El email'),
-    emailValidator(email.value),
+    required(nombre_de_usuario.value, 'El nombre_de_usuario'),
     required(password.value, 'La contraseña'),
     minLength(password.value, 4, 'La contraseña'),
   ])
@@ -36,7 +34,7 @@ async function handleLogin() {
   }
 
   // Llamar al backend
-  const success = await auth.login(email.value, password.value)
+  const success = await auth.login(nombre_de_usuario.value, password.value)
 
   if (success) {
     // Redirigir a la ruta original o a la agenda
@@ -65,12 +63,12 @@ async function handleLogin() {
 
     <form @submit.prevent="handleLogin">
       <div class="form-group">
-        <label for="login-email">Email</label>
+        <label for="login-nombre_de_usuario">Nombre de usuario</label>
         <input
-          v-model="email"
-          type="email"
-          id="login-email"
-          placeholder="correo@ejemplo.com"
+          v-model="nombre_de_usuario"
+          type="text"
+          id="login-nombre_de_usuario"
+          placeholder="admin"
           required
         />
       </div>

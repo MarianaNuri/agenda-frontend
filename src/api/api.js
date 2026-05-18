@@ -1,12 +1,3 @@
-/**
- * src/api/api.js
- *
- * Servicio HTTP reutilizable que:
- *  - Carga la URL base desde config.json
- *  - Adjunta automáticamente el token JWT en cada petición protegida
- *  - Maneja errores HTTP de forma centralizada
- *  - Detecta respuestas 401 para forzar logout
- */
 
 import { getApiUrl } from '@/config/api'
 
@@ -31,10 +22,9 @@ export async function apiRequest(endpoint, {
   const baseUrl = await getApiUrl()
   const url = `${baseUrl}${endpoint}`
 
-  // Construir headers
+  
   const finalHeaders = { ...headers }
 
-  // Adjuntar token JWT automáticamente
   if (auth) {
     const token = localStorage.getItem('auth_token')
     if (token) {

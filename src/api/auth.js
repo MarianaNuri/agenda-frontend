@@ -9,14 +9,14 @@ import { apiRequest } from '@/api/api'
 
 /**
  * Iniciar sesión.
- * @param {string} email
+ * @param {string} nombre_de_usuario
  * @param {string} password
  * @returns {Promise<Object>} { token, user, message }
  */
-export async function loginService(email, password) {
+export async function loginService(nombre_de_usuario, password) {
   const data = await apiRequest('/auth/login.php', {
     method: 'POST',
-    body: { email, password },
+    body: { nombre_de_usuario, password },
     auth: false, // No necesita token para login
   })
   return data
@@ -24,15 +24,15 @@ export async function loginService(email, password) {
 
 /**
  * Registrar nuevo usuario.
- * @param {string} nombre
+ * @param {string} nombre_de_usuario
  * @param {string} email
  * @param {string} password
  * @returns {Promise<Object>} { token, user, message }
  */
-export async function registerService(nombre, email, password) {
+export async function registerService(nombre_de_usuario, email, password) {
   const data = await apiRequest('/auth/registrar.php', {
     method: 'POST',
-    body: { nombre, email, password },
+    body: { nombre_de_usuario, email, password },
     auth: false,
   })
   return data
@@ -71,7 +71,7 @@ export async function updateProfileService(profileData) {
   // Si hay foto, usar FormData
   if (profileData.foto instanceof File) {
     const formData = new FormData()
-    formData.append('nombre', profileData.nombre)
+    formData.append('nombre_de_usuario', profileData.nombre_de_usuario)
     formData.append('email', profileData.email)
     formData.append('foto', profileData.foto)
 
@@ -87,7 +87,7 @@ export async function updateProfileService(profileData) {
   const data = await apiRequest('/auth/editar.php', {
     method: 'POST',
     body: {
-      nombre: profileData.nombre,
+      nombre_de_usuario: profileData.nombre_de_usuario,
       email: profileData.email,
     },
     auth: true,
