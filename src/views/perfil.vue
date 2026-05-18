@@ -12,7 +12,6 @@ import { useAuthStore } from '@/stores/auth'
 import { getApiUrl } from '@/config/api'
 import {
   required,
-  email as emailValidator,
   validateAll,
 } from '@/utils/validators'
 
@@ -21,7 +20,6 @@ const router = useRouter()
 
 const isEditing = ref(false)
 const editNombreUsuario = ref('')
-const editEmail = ref('')
 const editFoto = ref(null)
 const editFotoPreview = ref('')
 const photoBaseUrl = ref('')
@@ -57,7 +55,6 @@ const avatarUrl = computed(() => {
 
 function startEdit() {
   editNombreUsuario.value = auth.userName
-  editEmail.value = auth.userEmail
   editFoto.value = null
   editFotoPreview.value = ''
   isEditing.value = true
@@ -83,8 +80,6 @@ async function saveProfile() {
   // Validaciones Front-End
   const validationError = validateAll([
     required(editNombreUsuario.value, 'El nombre de usuario'),
-    required(editEmail.value, 'El email'),
-    emailValidator(editEmail.value),
   ])
 
   // Si hay error, detener envío
@@ -96,7 +91,6 @@ async function saveProfile() {
   // Construir datos
   const profileData = {
     nombre_de_usuario: editNombreUsuario.value,
-    email: editEmail.value,
   }
 
   // Agregar foto si existe
@@ -163,13 +157,6 @@ async function handleLogout() {
             <span class="detail-value">{{ auth.userName }}</span>
           </div>
         </div>
-        <div class="detail-row">
-          <i class="fa-solid fa-envelope"></i>
-          <div>
-            <span class="detail-label">Email</span>
-            <span class="detail-value">{{ auth.userEmail }}</span>
-          </div>
-        </div>
       </div>
 
       <div class="contact-actions" style="gap: .75rem; flex-wrap: wrap; justify-content: center; margin-top: 1rem;">
@@ -190,10 +177,6 @@ async function handleLogout() {
         <div class="form-group">
           <label for="edit-nombre_de_usuario">Nombre de usuario</label>
           <input v-model="editNombreUsuario" type="text" id="edit-nombre_de_usuario" required />
-        </div>
-        <div class="form-group">
-          <label for="edit-email">Email</label>
-          <input v-model="editEmail" type="email" id="edit-email" required />
         </div>
 
         <!-- Foto de perfil -->

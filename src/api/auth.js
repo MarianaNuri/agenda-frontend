@@ -25,14 +25,13 @@ export async function loginService(nombre_de_usuario, password) {
 /**
  * Registrar nuevo usuario.
  * @param {string} nombre_de_usuario
- * @param {string} email
  * @param {string} password
  * @returns {Promise<Object>} { token, user, message }
  */
-export async function registerService(nombre_de_usuario, email, password) {
+export async function registerService(nombre_de_usuario, password) {
   const data = await apiRequest('/auth/registrar.php', {
     method: 'POST',
-    body: { nombre_de_usuario, email, password },
+    body: { nombre_de_usuario, password },
     auth: false,
   })
   return data
@@ -64,7 +63,7 @@ export async function logoutService() {
 
 /**
  * Actualizar perfil del usuario autenticado.
- * @param {Object} profileData - { nombre, email, foto? }
+ * @param {Object} profileData
  * @returns {Promise<Object>}
  */
 export async function updateProfileService(profileData) {
@@ -72,7 +71,6 @@ export async function updateProfileService(profileData) {
   if (profileData.foto instanceof File) {
     const formData = new FormData()
     formData.append('nombre_de_usuario', profileData.nombre_de_usuario)
-    formData.append('email', profileData.email)
     formData.append('foto', profileData.foto)
 
     const data = await apiRequest('/auth/editar.php', {
@@ -83,12 +81,12 @@ export async function updateProfileService(profileData) {
     return data
   }
 
+
   // Sin foto, enviar JSON
   const data = await apiRequest('/auth/editar.php', {
     method: 'POST',
     body: {
       nombre_de_usuario: profileData.nombre_de_usuario,
-      email: profileData.email,
     },
     auth: true,
   })

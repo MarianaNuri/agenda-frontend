@@ -11,7 +11,6 @@ import { RouterLink, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import {
   required,
-  email as emailValidator,
   minLength,
   matches,
   validateAll,
@@ -21,7 +20,6 @@ const auth = useAuthStore()
 const router = useRouter()
 
 const nombre_de_usuario = ref('')
-const email = ref('')
 const password = ref('')
 const confirmPassword = ref('')
 const localError = ref('')
@@ -32,8 +30,6 @@ async function handleRegister() {
   // Validaciones del formulario
   const validationError = validateAll([
     required(nombre_de_usuario.value, 'El nombre_de_usuario'),
-    required(email.value, 'El email'),
-    emailValidator(email.value),
     required(password.value, 'La contraseña'),
     minLength(password.value, 4, 'La contraseña'),
     matches(password.value, confirmPassword.value),
@@ -45,7 +41,7 @@ async function handleRegister() {
   }
 
   // Llamar al backend
-  const success = await auth.register(nombre_de_usuario.value, email.value, password.value)
+  const success = await auth.register(nombre_de_usuario.value, password.value)
 
   if (success) {
     router.push('/agenda')
@@ -77,17 +73,6 @@ async function handleRegister() {
           type="text"
           id="reg-nombre"
           placeholder="Tu nombre de usuario"
-          required
-        />
-      </div>
-
-      <div class="form-group">
-        <label for="reg-email">Email</label>
-        <input
-          v-model="email"
-          type="email"
-          id="reg-email"
-          placeholder="correo@ejemplo.com"
           required
         />
       </div>
