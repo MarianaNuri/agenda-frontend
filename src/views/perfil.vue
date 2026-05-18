@@ -15,7 +15,7 @@ const auth = useAuthStore()
 const router = useRouter()
 
 const isEditing = ref(false)
-const editNombre = ref('')
+const editNombreUsuario = ref('')
 const editEmail = ref('')
 const editFoto = ref(null)
 const editFotoPreview = ref('')
@@ -51,7 +51,7 @@ const avatarUrl = computed(() => {
 })
 
 function startEdit() {
-  editNombre.value = auth.userName
+  editNombreUsuario.value = auth.userName
   editEmail.value = auth.userEmail
   editFoto.value = null
   editFotoPreview.value = ''
@@ -73,7 +73,7 @@ function onFotoChange(e) {
 
 async function saveProfile() {
   const profileData = {
-    nombre: editNombre.value,
+    nombre_de_usuario: editNombreUsuario.value,
     email: editEmail.value,
   }
   if (editFoto.value) {
@@ -132,7 +132,7 @@ async function handleLogout() {
         <div class="detail-row">
           <i class="fa-solid fa-user"></i>
           <div>
-            <span class="detail-label">Nombre</span>
+            <span class="detail-label">Nombre de usuario</span>
             <span class="detail-value">{{ auth.userName }}</span>
           </div>
         </div>
@@ -161,8 +161,8 @@ async function handleLogout() {
     <template v-if="isEditing">
       <form @submit.prevent="saveProfile" style="margin-top: 1rem;">
         <div class="form-group">
-          <label for="edit-nombre">Nombre</label>
-          <input v-model="editNombre" type="text" id="edit-nombre" required />
+          <label for="edit-nombre_de_usuario">Nombre de usuario</label>
+          <input v-model="editNombreUsuario" type="text" id="edit-nombre_de_usuario" required />
         </div>
         <div class="form-group">
           <label for="edit-email">Email</label>

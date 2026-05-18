@@ -7,6 +7,7 @@
  * Incluye validación de formulario y mensajes de error/éxito.
  */
 import { ref } from 'vue'
+import { required, minLength, validateAll, } from '@/utils/validators'
 import { RouterLink, useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
