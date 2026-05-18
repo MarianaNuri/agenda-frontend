@@ -13,26 +13,12 @@ import { apiRequest } from '@/api/api'
  * @param {string} password
  * @returns {Promise<Object>} { token, user, message }
  */
-//export async function loginService(nombre_de_usuario, password) {
-  //const data = await apiRequest('/auth/login.php', {
-   // method: 'POST',
-    //body: { nombre_de_usuario, password },
-    //auth: false, // No necesita token para login
-  //})
-  //return data
-//}
-
 export async function loginService(nombre_de_usuario, password) {
-  const formData = new FormData()
-  formData.append('nombre_de_usuario', nombre_de_usuario)
-  formData.append('password', password)
-
   const data = await apiRequest('/auth/login.php', {
     method: 'POST',
-    body: formData,
-    auth: false,
+    body: { nombre_de_usuario, password }, // Enviamos objeto plano (JSON)
+    auth: false, // No necesita token para login
   })
-
   return data
 }
 
@@ -42,27 +28,12 @@ export async function loginService(nombre_de_usuario, password) {
  * @param {string} password
  * @returns {Promise<Object>} { token, user, message }
  */
-//export async function registerService(nombre_de_usuario, password) {
- // const data = await apiRequest('/auth/registrar.php', {
-  //  method: 'POST',
-    //body: { nombre_de_usuario, password },
-    //auth: false,
-  //})
-
-  //return data
-//}
-
 export async function registerService(nombre_de_usuario, password) {
-  const formData = new FormData()
-  formData.append('nombre_de_usuario', nombre_de_usuario)
-  formData.append('password', password)
-
   const data = await apiRequest('/auth/registrar.php', {
     method: 'POST',
-    body: formData,
+    body: { nombre_de_usuario, password }, // Enviamos objeto plano (JSON)
     auth: false,
   })
-
   return data
 }
 
@@ -96,7 +67,7 @@ export async function logoutService() {
  * @returns {Promise<Object>}
  */
 export async function updateProfileService(profileData) {
-  // Si hay foto, usar FormData
+  // Si hay foto, aquí SÍ es necesario usar FormData por el archivo binario
   if (profileData.foto instanceof File) {
     const formData = new FormData()
     formData.append('nombre_de_usuario', profileData.nombre_de_usuario)
@@ -110,8 +81,7 @@ export async function updateProfileService(profileData) {
     return data
   }
 
-
-  // Sin foto, enviar JSON
+  // Sin foto, enviar JSON normal
   const data = await apiRequest('/auth/editar.php', {
     method: 'POST',
     body: {
