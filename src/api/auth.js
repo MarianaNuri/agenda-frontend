@@ -34,6 +34,7 @@ export async function registerService(nombre_de_usuario, password) {
     body: { nombre_de_usuario, password },
     auth: false,
   })
+
   return data
 }
 
