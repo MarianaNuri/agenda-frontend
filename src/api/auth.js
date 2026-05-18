@@ -29,12 +29,27 @@ export async function loginService(nombre_de_usuario, password) {
  * @param {string} password
  * @returns {Promise<Object>} { token, user, message }
  */
+//export async function registerService(nombre_de_usuario, email, password) {
+//  const data = await apiRequest('/auth/registrar.php', {
+//    method: 'POST',
+//    body: { nombre_de_usuario, email, password },
+//    auth: false,
+ // })
+//  return data
+//}
+
 export async function registerService(nombre_de_usuario, email, password) {
+  const formData = new FormData()
+  formData.append('nombre_de_usuario', nombre_de_usuario)
+  formData.append('email', email)
+  formData.append('password', password)
+
   const data = await apiRequest('/auth/registrar.php', {
     method: 'POST',
-    body: { nombre_de_usuario, email, password },
+    body: formData,
     auth: false,
   })
+
   return data
 }
 
