@@ -1,10 +1,3 @@
-/**
- * src/stores/auth.js
- *
- * Store Pinia de autenticación.
- * Gestiona el token JWT, los datos del usuario y la comunicación con el backend.
- */
-
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import {
@@ -27,7 +20,7 @@ export const useAuthStore = defineStore('auth', () => {
   /* ---------- Getters ---------- */
   const isAuthenticated = computed(() => !!token.value)
   const userName = computed(() => user.value?.nombre_de_usuario || 'Usuario')
-  const userEmail = computed(() => user.value?.email || '')
+  //const userEmail = computed(() => user.value?.email || '')
   const userPhoto = computed(() => user.value?.foto || null)
 
   /* ---------- Helpers privados ---------- */
@@ -60,17 +53,17 @@ export const useAuthStore = defineStore('auth', () => {
 
   /**
    * Iniciar sesión con email y contraseña.
-   * @param {string} email
+   * @param {string} nombre_de_usuario
    * @param {string} password
    * @returns {Promise<boolean>} true si login exitoso
    */
-  async function login(email, password) {
+  async function login(nombre_de_usuario, password) {
     loading.value = true
     error.value = ''
     successMessage.value = ''
 
     try {
-      const data = await loginService(email, password)
+      const data = await loginService(nombre_de_usuario, password)
       _setSession(data.token, data.user)
       successMessage.value = data.message || '¡Bienvenido!'
       _autoClearMessages()
@@ -86,8 +79,8 @@ export const useAuthStore = defineStore('auth', () => {
 
   /**
    * Registrar nuevo usuario.
-   * @param {string} nombre
-   * @param {string} email
+   * @param {string} nombre_de_usuario
+
    * @param {string} password
    * @returns {Promise<boolean>} true si registro exitoso
    */
@@ -206,7 +199,7 @@ export const useAuthStore = defineStore('auth', () => {
     // Getters
     isAuthenticated,
     userName,
-    userEmail,
+    //userEmail,
     userPhoto,
     // Actions
     login,
