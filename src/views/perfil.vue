@@ -10,6 +10,11 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { getApiUrl } from '@/config/api'
+import {
+  required,
+  email as emailValidator,
+  validateAll,
+} from '@/utils/validators'
 
 const auth = useAuthStore()
 const router = useRouter()
@@ -72,15 +77,37 @@ function onFotoChange(e) {
 }
 
 async function saveProfile() {
+  // Limpiar error previo
+  auth.error = ''
+
+  // Validaciones Front-End
+  const validationError = validateAll([
+    required(editNombreUsuario.value, 'El nombre de usuario'),
+    required(editEmail.value, 'El email'),
+    emailValidator(editEmail.value),
+  ])
+
+  // Si hay error, detener envío
+  if (validationError) {
+    auth.error = validationError
+    return
+  }
+
+  // Construir datos
   const profileData = {
     nombre_de_usuario: editNombreUsuario.value,
     email: editEmail.value,
   }
+
+  // Agregar foto si existe
   if (editFoto.value) {
     profileData.foto = editFoto.value
   }
 
+  // Enviar al backend
   const success = await auth.updateProfile(profileData)
+
+  // Si se actualizó correctamente
   if (success) {
     isEditing.value = false
     editFotoPreview.value = ''
