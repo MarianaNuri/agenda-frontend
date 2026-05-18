@@ -26,7 +26,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   /* ---------- Getters ---------- */
   const isAuthenticated = computed(() => !!token.value)
-  const userName = computed(() => user.value?.nombre || 'Usuario')
+  const userName = computed(() => user.value?.nombre_de_usuario || 'Usuario')
   const userEmail = computed(() => user.value?.email || '')
   const userPhoto = computed(() => user.value?.foto || null)
 
@@ -91,13 +91,13 @@ export const useAuthStore = defineStore('auth', () => {
    * @param {string} password
    * @returns {Promise<boolean>} true si registro exitoso
    */
-  async function register(nombre, email, password) {
+  async function register(nombre_de_usuario, password) {
     loading.value = true
     error.value = ''
     successMessage.value = ''
 
     try {
-      const data = await registerService(nombre, email, password)
+      const data = await registerService(nombre_de_usuario, password)
       _setSession(data.token, data.user)
       successMessage.value = data.message || '¡Cuenta creada con éxito!'
       _autoClearMessages()
