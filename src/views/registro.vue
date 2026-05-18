@@ -41,7 +41,7 @@ async function handleRegister() {
   }
 
   // Llamar al backend
-  const success = await auth.register(nombre_de_usuario.value, password.value)
+  const success = await auth.registrar(nombre_de_usuario.value, password.value)
 
   if (success) {
     router.push('/agenda')
