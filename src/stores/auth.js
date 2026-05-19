@@ -11,7 +11,13 @@ import { getApiUrl } from '@/config/api'
 
 export const useAuthStore = defineStore('auth', () => {
   /* ---------- State ---------- */
-  const user = ref(JSON.parse(localStorage.getItem('auth_user') || 'null'))
+  const savedUser = localStorage.getItem('auth_user')
+
+    const user = ref(
+      savedUser && savedUser !== 'undefined'
+        ? JSON.parse(savedUser)
+        : null
+    )
   const token = ref(localStorage.getItem('auth_token') || '')
   const loading = ref(false)
   const error = ref('')
