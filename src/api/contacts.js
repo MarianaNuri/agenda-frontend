@@ -25,17 +25,20 @@ export async function getContactsService(userId) {
 }
 
 /**
- * Obtener un contacto por su ID.
- * @param {number|string} id
+ * Obtener un contacto por su ID de manera dinámica.
+ * @param {number|string} id - ID del contacto
+ * @param {number|string} userId - ID del usuario activo 🔍 NUEVO
  * @returns {Promise<Object>} Datos del contacto
  */
-export async function getContactByIdService(id) {
-  const data = await apiRequest(`/contactos/detalle.php?id=${id}`, {
+export async function getContactByIdService(id, userId) {
+  //PASAMOS AMBOS PARÁMETROS EN LA URL
+  const data = await apiRequest(`/contactos/detalle.php?id=${id}&usuario_id=${userId}`, {
     method: 'GET',
     auth: true,
   })
   return data?.data || data || null
 }
+
 
 /**
  * Crear un nuevo contacto asignado a un usuario específico.
