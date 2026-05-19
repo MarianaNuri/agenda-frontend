@@ -42,7 +42,7 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
-      path: '/agenda/:id',
+      path: '/agenda/editar/:id',
       name: 'editar',
       component: () => import('../views/EditarContacto.vue'),
       meta: { requiresAuth: true },

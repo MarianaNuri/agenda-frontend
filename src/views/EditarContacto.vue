@@ -15,17 +15,23 @@ const route = useRoute()
 const router = useRouter()
 
 const contacto = ref(null)
+const contactId = Number(route.params.id)
 const loadingContact = ref(true)
 
 /* Cargar contacto al montar */
 onMounted(async () => {
   loadingContact.value = true
-  contacto.value = await store.getById(route.params.id)
+  if (!contactId) {
+    contacto.value = null
+    loadingContact.value = false
+    return
+  }
+  contacto.value = await store.getById(contactId)
   loadingContact.value = false
 })
 
 async function handleUpdate(data) {
-  const success = await store.updateContact(route.params.id, data)
+  const success = await store.updateContact(contactId, data)
   if (success) {
     router.push('/agenda')
   }
