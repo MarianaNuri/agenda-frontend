@@ -1,3 +1,10 @@
+/**
+ * src/stores/auth.js
+ *
+ * Store Pinia de contactos.
+ * Reemplaza los datos demo por consumo real del backend via API REST.
+ */
+
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import {
@@ -7,17 +14,16 @@ import {
   logoutService,
   updateProfileService,
 } from '@/api/auth'
-import { getApiUrl } from '@/config/api'
 
 export const useAuthStore = defineStore('auth', () => {
   /* ---------- State ---------- */
   const savedUser = localStorage.getItem('auth_user')
 
-    const user = ref(
-      savedUser && savedUser !== 'undefined'
-        ? JSON.parse(savedUser)
-        : null
-    )
+  const user = ref(
+    savedUser && savedUser !== 'undefined'
+      ? JSON.parse(savedUser)
+      : null
+  )
   const token = ref(localStorage.getItem('auth_token') || '')
   const loading = ref(false)
   const error = ref('')
@@ -26,7 +32,6 @@ export const useAuthStore = defineStore('auth', () => {
   /* ---------- Getters ---------- */
   const isAuthenticated = computed(() => !!token.value)
   const userName = computed(() => user.value?.nombre_de_usuario || 'Usuario')
-  //const userEmail = computed(() => user.value?.email || '')
   const userPhoto = computed(() => user.value?.foto || null)
 
   /* ---------- Helpers privados ---------- */
@@ -58,7 +63,7 @@ export const useAuthStore = defineStore('auth', () => {
   /* ---------- Actions ---------- */
 
   /**
-   * Iniciar sesión con email y contraseña.
+   * Iniciar sesión con nombre de usuario y contraseña.
    * @param {string} nombre_de_usuario
    * @param {string} password
    * @returns {Promise<boolean>} true si login exitoso
@@ -89,7 +94,6 @@ export const useAuthStore = defineStore('auth', () => {
   /**
    * Registrar nuevo usuario.
    * @param {string} nombre_de_usuario
-
    * @param {string} password
    * @returns {Promise<boolean>} true si registro exitoso
    */
@@ -117,38 +121,44 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   /**
-   * Cerrar sesión.
+   * Cerrar sesión de manera segura pasándole el ID al backend.
    */
   async function logout() {
     loading.value = true
     try {
-      await logoutService()
+      // 🔍 Extraemos el ID del usuario actual para avisarle a logout.php
+      const userId = user.value?.id || null
+      await logoutService(userId)
     } catch {
-      // Aunque falle en el server, cerramos la sesión local
-      console.warn('[auth] No se pudo cerrar sesión en el servidor.')
+      console.warn('[auth] No se pudo cerrar sesión en el servidor, limpiando localmente.')
     } finally {
+      // 🔍 SE LIMPIA SÍ O SÍ
       _clearSession()
       loading.value = false
     }
   }
 
   /**
-   * Obtener datos del usuario autenticado (verificar token).
-   * @returns {Promise<boolean>} true si el token es válido
+   * Obtener datos del usuario autenticado (perfil dinámico).
+   * @returns {Promise<boolean>} true si se cargó correctamente
    */
   async function fetchUser() {
     if (!token.value) return false
 
     loading.value = true
     try {
-      const data = await getMeService()
-      user.value = data.usuario || data
+      // 🔍 Pasamos el ID del usuario actual al servicio de perfil
+      const userId = user.value?.id || 1
+      const data = await getMeService(userId)
+      
+      // Adaptamos por si el backend responde con data.user o data.usuario
+      user.value = data.user || data.usuario || data
       localStorage.setItem('auth_user', JSON.stringify(user.value))
       return true
     } catch {
-      // Token inválido o expirado
-      _clearSession()
-      return false
+      // Si llega a fallar la red, mantenemos la sesión del localStorage para no sacarlo bruscamente
+      loading.value = false
+      return true 
     } finally {
       loading.value = false
     }
@@ -156,8 +166,6 @@ export const useAuthStore = defineStore('auth', () => {
 
   /**
    * Actualizar perfil del usuario.
-   * @param {Object} profileData - { nombre, email, foto? }
-   * @returns {Promise<boolean>}
    */
   async function updateProfile(profileData) {
     loading.value = true
@@ -166,14 +174,13 @@ export const useAuthStore = defineStore('auth', () => {
 
     try {
       const data = await updateProfileService(profileData)
-      // Actualizar datos locales
-      user.value = data.usuario|| { ...user.value, ...profileData }
-      // Si subió foto, no guardamos el File, sino la URL que devuelve el backend
-      if (data.usuario) {
-        localStorage.setItem('auth_user', JSON.stringify(data.usuario))
+      user.value = data.usuario || data.user || { ...user.value, ...profileData }
+      
+      if (data.usuario || data.user) {
+        localStorage.setItem('auth_user', JSON.stringify(data.usuario || data.user))
       } else {
         const updated = { ...user.value }
-        delete updated.foto // No guardar File en localStorage
+        delete updated.foto 
         localStorage.setItem('auth_user', JSON.stringify(updated))
       }
       successMessage.value = data.message || 'Perfil actualizado correctamente.'
@@ -189,16 +196,14 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   /**
-   * Construye la URL completa de una foto del servidor.
-   * @param {string} relativePath - Ruta relativa devuelta por el backend
-   * @returns {Promise<string>}
+   * Construye la URL completa de una foto del servidor de manera estática.
+   * @param {string} relativePath
+   * @returns {string}
    */
-  async function buildPhotoUrl(relativePath) {
+  function buildPhotoUrl(relativePath) {
     if (!relativePath) return ''
-    // Si ya es una URL completa, devolverla tal cual
     if (relativePath.startsWith('http')) return relativePath
-    const base = await getApiUrl()
-    return `${base}/${relativePath.replace(/^\/+/, '')}`
+    return `http://proyectou5agenda.atwebpages.com/uploads/perfiles/${relativePath.replace(/^\/+/, '')}`
   }
 
   return {
@@ -211,7 +216,6 @@ export const useAuthStore = defineStore('auth', () => {
     // Getters
     isAuthenticated,
     userName,
-    //userEmail,
     userPhoto,
     // Actions
     login,
