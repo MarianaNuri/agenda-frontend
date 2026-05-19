@@ -20,16 +20,16 @@ const route = useRoute()
 const localSearch = ref('')
 const contactToDelete = ref(null)
 const showDeleteModal = ref(false)
-const photoBaseUrl = ref('')
+//const photoBaseUrl = ref('')
 
 /* Cargar contactos del backend al montar */
 onMounted(async () => {
   // Obtener la URL base para las fotos
-  try {
-    photoBaseUrl.value = await getApiUrl()
-  } catch {
-    photoBaseUrl.value = ''
-  }
+  //try {
+  //  photoBaseUrl.value = await getApiUrl()
+  //} catch {
+  //  photoBaseUrl.value = ''
+  //}
 
   // Cargar contactos
   await store.fetchContacts()
@@ -59,9 +59,9 @@ function clearSearch() {
  */
 function getContactPhotoUrl(contact) {
   if (contact.foto) {
-    if (contact.foto.startsWith('http')) return contact.foto
-    return `${photoBaseUrl.value}/${contact.foto.replace(/^\/+/, '')}`
+    return store.buildPhotoUrl(contact.foto)
   }
+
   return `https://ui-avatars.com/api/?name=${encodeURIComponent(contact.nombre)}&background=0044FF&color=fff&size=52`
 }
 
