@@ -166,7 +166,7 @@ export const useContactStore = defineStore('contacts', () => {
   }
 
 /**
-   * Elimina un contacto.
+   * Elimina un contacto de forma reactiva en el servidor y estado local.
    */
   async function deleteContact(id) {
     loading.value = true
@@ -174,16 +174,20 @@ export const useContactStore = defineStore('contacts', () => {
     successMessage.value = ''
 
     try {
-      // EXTRAEMOS EL ID DEL USUARIO LOGUEADO DESDE LA CLAVE CORRECTA
+      // Extraemos el ID del usuario logueado desde la clave 'auth_user'
       const session = JSON.parse(localStorage.getItem('auth_user') || '{}')
       const userId = session.id || session.id_usuario || 1
 
-      // LE PASAMOS EL USERID COMO SEGUNDO PARÁMETRO
+      // Llamamos al servicio modificado
       const result = await deleteContactService(id, userId)
       
-      // Remover del state local de forma reactiva para que desaparezca de la tabla al instante
-      contacts.value = contacts.value.filter((c) => Number(c.id) !== Number(id))
-      successMessage.value = result?.message || 'Contacto eliminado correctamente.'
+      if (result.success) {
+        // Remover del array local para que desaparezca visualmente de la tabla al instante
+        contacts.value = contacts.value.filter((c) => Number(c.id) !== Number(id))
+        successMessage.value = result.message || 'Operación realizada correctamente.'
+      } else {
+        error.value = result.message || 'No se pudo eliminar el contacto.'
+      }
       _autoClearMessages()
       return true
     } catch (err) {
@@ -195,6 +199,7 @@ export const useContactStore = defineStore('contacts', () => {
     }
   }
 
+  
   /**
    * Establece el query de búsqueda.
    * @param {string} query
