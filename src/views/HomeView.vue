@@ -34,7 +34,7 @@ const auth = useAuthStore()
             <i class="fa-solid fa-users"></i>
             <span>Ver Contactos</span>
           </RouterLink>
-          <RouterLink to="/crear" class="btn-new-contact" id="cta-crear">
+          <RouterLink to="/agenda/crear" class="btn-new-contact" id="cta-crear">
             <i class="fa-solid fa-user-plus"></i>
             <span>Nuevo Contacto</span>
           </RouterLink>
