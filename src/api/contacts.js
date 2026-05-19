@@ -8,16 +8,20 @@
 import { apiRequest } from '@/api/api'
 
 /**
- * Obtener todos los contactos del usuario autenticado.
+ * Obtener todos los contactos del usuario autenticado de forma dinámica.
+ * @param {number|string} userId
  * @returns {Promise<Array>} Lista de contactos
  */
-export async function getContactsService() {
-  const data = await apiRequest('/contactos/index.php', {
+export async function getContactsService(userId) {
+  // Pasamos el usuario_id en la URL para evitar bloqueos del Token
+  const data = await apiRequest(`/contactos/index.php?usuario_id=${userId}`, {
     method: 'GET',
     auth: true,
   })
-  // El backend puede devolver { contacts: [...] } o directamente un array
-  return data?.data || []
+  
+  // Como el backend modificado ya devuelve el array directo, mandamos 'data' entero.
+  // Si por alguna razón tu apiRequest lo vuelve a envolver, dejamos el respaldo data.data
+  return Array.isArray(data) ? data : (data?.data || data || [])
 }
 
 /**
@@ -30,15 +34,16 @@ export async function getContactByIdService(id) {
     method: 'GET',
     auth: true,
   })
-  return data?.data || null
+  return data?.data || data || null
 }
 
 /**
- * Crear un nuevo contacto.
+ * Crear un nuevo contacto asignado a un usuario específico.
  * @param {Object} contactData - { nombre, telefono, email, direccion, notas, foto? }
+ * @param {number|string} userId
  * @returns {Promise<Object>} Contacto creado
  */
-export async function createContactService(contactData) {
+export async function createContactService(contactData, userId) {
   const formData = new FormData()
   formData.append('nombre', contactData.nombre || '')
   formData.append('telefono', contactData.telefono || '')
@@ -50,7 +55,8 @@ export async function createContactService(contactData) {
     formData.append('foto', contactData.foto)
   }
 
-  const data = await apiRequest('/contactos/crear.php', {
+  // Pasamos el usuario_id también en la URL de creación
+  const data = await apiRequest(`/contactos/crear.php?usuario_id=${userId}`, {
     method: 'POST',
     body: formData,
     auth: true,
@@ -60,9 +66,6 @@ export async function createContactService(contactData) {
 
 /**
  * Actualizar un contacto existente.
- * @param {number|string} id
- * @param {Object} contactData - { nombre, telefono, email, direccion, notas, foto? }
- * @returns {Promise<Object>} Contacto actualizado
  */
 export async function updateContactService(id, contactData) {
   const formData = new FormData()
@@ -86,8 +89,6 @@ export async function updateContactService(id, contactData) {
 
 /**
  * Eliminar un contacto.
- * @param {number|string} id
- * @returns {Promise<Object>}
  */
 export async function deleteContactService(id) {
   const data = await apiRequest(`/contactos/eliminar.php?id=${id}`, {
