@@ -33,6 +33,8 @@ onMounted(async () => {
 
   // Cargar contactos
   await store.fetchContacts()
+  //para verificar que datos llegan
+  console.log(store.filteredContacts)
 
   // Tomar query param si viene del header
   if (route.query.q) {
@@ -103,7 +105,7 @@ function cancelDelete() {
         <i class="fa-solid fa-users"></i>
         Mis Contactos
       </h2>
-      <RouterLink to="/crear" class="btn-new-contact" id="btn-nuevo-contacto">
+      <RouterLink to="/agenda/crear" class="btn-new-contact" id="btn-nuevo-contacto">
         <i class="fa-solid fa-user-plus"></i>
         <span>Nuevo Contacto</span>
       </RouterLink>
@@ -143,7 +145,7 @@ function cancelDelete() {
       <p v-if="store.searchQuery">No se encontraron contactos para "{{ store.searchQuery }}".</p>
       <p v-else>Aún no tienes contactos. ¡Agrega el primero!</p>
       <br />
-      <RouterLink to="/crear" class="btn-new-contact">
+      <RouterLink to="/agenda/crear" class="btn-new-contact">
         <i class="fa-solid fa-user-plus"></i>
         <span>Agregar Contacto</span>
       </RouterLink>
@@ -189,6 +191,7 @@ function cancelDelete() {
             <td data-label="">
               <div class="contact-actions">
                 <RouterLink
+                  v-if="contact.id"
                   :to="{ name: 'editar', params: { id: contact.id } }"
                   class="btn-action btn-edit"
                   title="Editar"

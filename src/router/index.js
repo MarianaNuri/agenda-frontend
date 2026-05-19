@@ -36,13 +36,13 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
-      path: '/crear',
+      path: '/agenda/crear',
       name: 'crear',
       component: () => import('../views/CrearContacto.vue'),
       meta: { requiresAuth: true },
     },
     {
-      path: '/editar/:id',
+      path: '/agenda/:id',
       name: 'editar',
       component: () => import('../views/EditarContacto.vue'),
       meta: { requiresAuth: true },
