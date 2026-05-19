@@ -68,13 +68,14 @@ export async function logoutService(userId) {
 /**
  * Actualizar perfil del usuario autenticado.
  */
-export async function updateProfileService(profileData) {
+export async function updateProfileService(profileData, userId) {
   if (profileData.foto instanceof File) {
     const formData = new FormData()
     formData.append('nombre_de_usuario', profileData.nombre_de_usuario)
     formData.append('foto', profileData.foto)
 
-    const data = await apiRequest('/auth/editar.php', {
+    // 
+    const data = await apiRequest(`/auth/editar.php?id=${userId}`, {
       method: 'POST',
       body: formData,
       auth: true,
@@ -82,7 +83,8 @@ export async function updateProfileService(profileData) {
     return data
   }
 
-  const data = await apiRequest('/auth/editar.php', {
+  // 🔍 CORREGIDO: También añadimos ?id= aquí para cuando solo se cambia el nombre
+  const data = await apiRequest(`/auth/editar.php?id=${userId}`, {
     method: 'POST',
     body: {
       nombre_de_usuario: profileData.nombre_de_usuario,
