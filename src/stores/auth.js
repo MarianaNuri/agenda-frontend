@@ -196,14 +196,16 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   /**
-   * Construye la URL completa de una foto del servidor de manera estática.
+/**
+   * Construye la URL completa de una foto del servidor de manera dinámica.
    * @param {string} relativePath
    * @returns {string}
    */
   function buildPhotoUrl(relativePath) {
     if (!relativePath) return ''
     if (relativePath.startsWith('http')) return relativePath
-    return `http://proyectou5agenda.atwebpages.com/uploads/perfiles/${relativePath.replace(/^\/+/, '')}`
+  
+    return `http://proyectou5agenda.atwebpages.com/api/uploads/usuarios/${relativePath.replace(/^\/+/, '')}`
   }
 
   return {
