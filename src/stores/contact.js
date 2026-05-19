@@ -128,11 +128,8 @@ export const useContactStore = defineStore('contacts', () => {
     }
   }
 
-  /**
+/**
    * Actualiza un contacto existente.
-   * @param {number|string} id
-   * @param {Object} data
-   * @returns {Promise<boolean>}
    */
   async function updateContact(id, data) {
     loading.value = true
@@ -140,8 +137,14 @@ export const useContactStore = defineStore('contacts', () => {
     successMessage.value = ''
 
     try {
-      const result = await updateContactService(id, data)
-      // Actualizar en el state local
+      // EXTRAEMOS EL ID DEL USUARIO LOGUEADO DESDE LA CLAVE CORRECTA
+      const session = JSON.parse(localStorage.getItem('auth_user') || '{}')
+      const userId = session.id || session.id_usuario || 1
+
+      // LE PASAMOS EL USERID AL SERVICIO
+      const result = await updateContactService(id, data, userId)
+      
+      // Actualizar en el state local de Vue de forma reactiva
       const updatedContact = result.contact || { ...data, id: Number(id) }
       const idx = contacts.value.findIndex((c) => Number(c.id) === Number(id))
       if (idx !== -1) {
