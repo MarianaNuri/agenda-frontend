@@ -76,18 +76,21 @@ export const useContactStore = defineStore('contacts', () => {
   /**
    * Obtiene un contacto por ID.
    * Primero busca en el state local; si no lo encuentra, lo pide al backend.
-   * @param {number|string} id
-   * @returns {Promise<Object|null>}
    */
   async function getById(id) {
     const numId = Number(id)
-    // Buscar primero en caché local
+    // Buscar primero en caché local (si ya existe en la tabla, no hace petición a la BD)
     const local = contacts.value.find((c) => Number(c.id) === numId)
     if (local) return local
 
-    // Si no está en caché, pedirlo al backend
+    // Si no está en la tabla local, ir a traerlo del backend
     try {
-      const contact = await getContactByIdService(id)
+      // EXTRAEMOS EL ID DEL USUARIO DESDE LA CLAVE CORRECTA
+      const session = JSON.parse(localStorage.getItem('auth_user') || '{}')
+      const userId = session.id || session.id_usuario || 1
+
+      //  LE PASAMOS EL ID AL SERVICIO
+      const contact = await getContactByIdService(id, userId)
       return contact
     } catch (err) {
       error.value = err.message || 'Contacto no encontrado.'
