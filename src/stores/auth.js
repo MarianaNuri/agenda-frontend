@@ -164,16 +164,19 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  /**
-   * Actualizar perfil del usuario.
-   */
-  async function updateProfile(profileData) {
+  // ACTUALIZAR PERFILES
+async function updateProfile(profileData) {
     loading.value = true
     error.value = ''
     successMessage.value = ''
 
     try {
-      const data = await updateProfileService(profileData)
+      //  Extraemos el ID del estado global (con soporte por si se llama id o id_usuario)
+      const userId = user.value?.id || user.value?.id_usuario
+
+      //  Se lo pasamos como segundo parámetro al servicio de la API
+      const data = await updateProfileService(profileData, userId)
+      
       user.value = data.usuario || data.user || { ...user.value, ...profileData }
       
       if (data.usuario || data.user) {
