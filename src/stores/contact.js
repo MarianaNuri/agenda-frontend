@@ -208,16 +208,17 @@ export const useContactStore = defineStore('contacts', () => {
     searchQuery.value = query
   }
 
-  /**
-   * Construye la URL completa para la foto de un contacto en AwardSpace.
-   * @param {string} relativePath
-   * @returns {string}
-   */
-  function buildPhotoUrl(relativePath) {
-    if (!relativePath) return ''
-    if (relativePath.startsWith('http')) return relativePath
-    return `http://proyectou5agenda.atwebpages.com/uploads/contactos/${relativePath.replace(/^\/+/, '')}`
-  }
+ /**
+ * Construye la URL completa para la foto de un contacto en AwardSpace.
+ * @param {string} relativePath
+ * @returns {string}
+ */
+function buildPhotoUrl(relativePath) {
+  if (!relativePath) return ''
+  if (relativePath.startsWith('http')) return relativePath
+  return `http://proyectou5agenda.atwebpages.com/api/uploads/contactos/${relativePath.replace(/^\/+/, '')}`
+}
+  
   return {
     // State
     contacts,
