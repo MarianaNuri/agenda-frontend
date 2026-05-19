@@ -53,18 +53,17 @@ function clearSearch() {
 }
 
 /**
- * Construye la URL de la foto de un contacto.
- * Si el contacto tiene foto del backend, construye la URL completa.
- * Si no, usa ui-avatars como fallback.
+ * Construye la URL de la foto de un contacto usando el helper de Pinia.
+ * Si no tiene foto, usa ui-avatars como respaldo con sus iniciales.
  */
 function getContactPhotoUrl(contact) {
   if (contact.foto) {
-    if (contact.foto.startsWith('http')) return contact.foto
-    return `${photoBaseUrl.value}/${contact.foto.replace(/^\/+/, '')}`
+    // Usamos la función centralizada de tu store que apunta a /uploads/contactos/
+    return store.buildPhotoUrl(contact.foto)
   }
+  // Fallback con las iniciales si el campo es NULL
   return `https://ui-avatars.com/api/?name=${encodeURIComponent(contact.nombre)}&background=0044FF&color=fff&size=52`
 }
-
 /* Delete flow */
 function askDelete(contact) {
   contactToDelete.value = contact
