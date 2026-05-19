@@ -92,11 +92,15 @@ export async function updateContactService(id, contactData, userId) {
   return data
 }
 
+
 /**
- * Eliminar un contacto.
+ * Eliminar un contacto asignado al usuario.
+ * @param {number|string} id - ID del contacto a borrar
+ * @param {number|string} userId - ID del usuario logueado 🔍 NUEVO PARÁMETRO
  */
-export async function deleteContactService(id) {
-  const data = await apiRequest(`/contactos/eliminar.php?id=${id}`, {
+export async function deleteContactService(id, userId) {
+  //CONCATENAMOS EL USUARIO_ID EN LA URL JUNTO AL ID DEL CONTACTO :P
+  const data = await apiRequest(`/contactos/eliminar.php?id=${id}&usuario_id=${userId}`, {
     method: 'DELETE',
     auth: true,
   })
