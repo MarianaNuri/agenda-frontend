@@ -162,10 +162,8 @@ export const useContactStore = defineStore('contacts', () => {
     }
   }
 
-  /**
+/**
    * Elimina un contacto.
-   * @param {number|string} id
-   * @returns {Promise<boolean>}
    */
   async function deleteContact(id) {
     loading.value = true
@@ -173,8 +171,14 @@ export const useContactStore = defineStore('contacts', () => {
     successMessage.value = ''
 
     try {
-      const result = await deleteContactService(id)
-      // Remover del state local
+      // EXTRAEMOS EL ID DEL USUARIO LOGUEADO DESDE LA CLAVE CORRECTA
+      const session = JSON.parse(localStorage.getItem('auth_user') || '{}')
+      const userId = session.id || session.id_usuario || 1
+
+      // LE PASAMOS EL USERID COMO SEGUNDO PARÁMETRO
+      const result = await deleteContactService(id, userId)
+      
+      // Remover del state local de forma reactiva para que desaparezca de la tabla al instante
       contacts.value = contacts.value.filter((c) => Number(c.id) !== Number(id))
       successMessage.value = result?.message || 'Contacto eliminado correctamente.'
       _autoClearMessages()
