@@ -65,10 +65,14 @@ export async function createContactService(contactData, userId) {
 }
 
 /**
- * Actualizar un contacto existente.
+ * Actualizar un contacto existente de forma dinámica.
+ * @param {number|string} id - ID del contacto
+ * @param {Object} contactData - Datos del formulario
+ * @param {number|string} userId - ID del usuario logueado NUEVO PARÁMETRO
  */
-export async function updateContactService(id, contactData) {
+export async function updateContactService(id, contactData, userId) {
   const formData = new FormData()
+  formData.append('id', id) // Mandamos el ID del contacto en el cuerpo
   formData.append('nombre', contactData.nombre || '')
   formData.append('telefono', contactData.telefono || '')
   formData.append('email', contactData.email || '')
@@ -79,7 +83,8 @@ export async function updateContactService(id, contactData) {
     formData.append('foto', contactData.foto)
   }
 
-  const data = await apiRequest(`/contactos/actualizar.php?id=${id}`, {
+  // PASAMOS EL USUARIO_ID EN LA URL
+  const data = await apiRequest(`/contactos/actualizar.php?usuario_id=${userId}`, {
     method: 'POST',
     body: formData,
     auth: true,
