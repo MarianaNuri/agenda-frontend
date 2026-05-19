@@ -14,7 +14,7 @@ const router = useRouter()
 async function handleLogout() {
   emit('close')
   await auth.logout()
-  router.push('/login')
+  router.push({ name: 'login' })
 }
 </script>
 
@@ -48,7 +48,7 @@ async function handleLogout() {
           <span>Contactos</span>
         </RouterLink>
 
-        <RouterLink to="/crear" class="sidebar-link" @click="$emit('close')">
+        <RouterLink to="/agenda/crear" class="sidebar-link" @click="$emit('close')">
           <i class="fa-solid fa-user-plus"></i>
           <span>Nuevo Contacto</span>
         </RouterLink>
