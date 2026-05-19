@@ -1,4 +1,4 @@
-/**
+/*
  * src/stores/contact.js
  *
  * Store Pinia de contactos.
@@ -58,7 +58,11 @@ export const useContactStore = defineStore('contacts', () => {
     error.value = ''
 
     try {
-      const data = await getContactsService()
+      // Extraemos el ID del usuario desde la sesión local
+      const session = JSON.parse(localStorage.getItem('user') || '{}')
+      const userId = session.id || session.id_usuario || 1
+
+      const data = await getContactsService(userId)
       contacts.value = Array.isArray(data) ? data : []
     } catch (err) {
       error.value = err.message || 'Error al cargar los contactos.'
@@ -67,6 +71,7 @@ export const useContactStore = defineStore('contacts', () => {
       loading.value = false
     }
   }
+
 
   /**
    * Obtiene un contacto por ID.
@@ -92,7 +97,7 @@ export const useContactStore = defineStore('contacts', () => {
   }
 
   /**
-   * Crea un nuevo contacto.
+   * Crea un nuevo contacto asignado al usuario actual.
    * @param {Object} data - { nombre, telefono, email, direccion, notas, foto? }
    * @returns {Promise<boolean>}
    */
@@ -102,7 +107,12 @@ export const useContactStore = defineStore('contacts', () => {
     successMessage.value = ''
 
     try {
-      const result = await createContactService(data)
+      // Extraemos el ID del usuario actual para mandarlo al crear.php
+      const session = JSON.parse(localStorage.getItem('user') || '{}')
+      const userId = session.id || session.id_usuario || 1
+
+      const result = await createContactService(data, userId)
+      
       // Agregar el contacto creado al state local
       const newContact = result.contact || result
       contacts.value.push(newContact)
@@ -184,17 +194,15 @@ export const useContactStore = defineStore('contacts', () => {
   }
 
   /**
-   * Construye la URL completa para la foto de un contacto.
+   * Construye la URL completa para la foto de un contacto en AwardSpace.
    * @param {string} relativePath
-   * @returns {Promise<string>}
+   * @returns {string}
    */
-  async function buildPhotoUrl(relativePath) {
+  function buildPhotoUrl(relativePath) {
     if (!relativePath) return ''
     if (relativePath.startsWith('http')) return relativePath
-    const base = await getApiUrl()
-    return `${base}/${relativePath.replace(/^\/+/, '')}`
+    return `http://proyectou5agenda.atwebpages.com/uploads/contactos/${relativePath.replace(/^\/+/, '')}`
   }
-
   return {
     // State
     contacts,
