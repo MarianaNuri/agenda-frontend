@@ -108,7 +108,7 @@ export const useContactStore = defineStore('contacts', () => {
 
     try {
       // Extraemos el ID del usuario actual para mandarlo al crear.php
-      const session = JSON.parse(localStorage.getItem('user') || '{}')
+      const session = JSON.parse(localStorage.getItem('auth_user') || '{}')
       const userId = session.id || session.id_usuario || 1
 
       const result = await createContactService(data, userId)
