@@ -17,7 +17,7 @@ export async function getContactsService() {
     auth: true,
   })
   // El backend puede devolver { contacts: [...] } o directamente un array
-  return data?.contacts || data || []
+  return data?.data || []
 }
 
 /**
@@ -30,7 +30,7 @@ export async function getContactByIdService(id) {
     method: 'GET',
     auth: true,
   })
-  return data?.contact || data
+  return data?.data || null
 }
 
 /**
