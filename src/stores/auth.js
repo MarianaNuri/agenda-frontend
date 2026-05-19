@@ -64,7 +64,10 @@ export const useAuthStore = defineStore('auth', () => {
 
     try {
       const data = await loginService(nombre_de_usuario, password)
-      _setSession(data.token, data.user)
+      if (!data.success) {
+        throw new Error(data.message || 'Error al iniciar sesión.')
+      }
+      _setSession(data.token, data.usuario)
       successMessage.value = data.message || '¡Bienvenido!'
       _autoClearMessages()
       return true
@@ -91,7 +94,10 @@ export const useAuthStore = defineStore('auth', () => {
 
     try {
       const data = await registerService(nombre_de_usuario, password)
-      _setSession(data.token, data.user)
+      if (!data.success) {
+        throw new Error(data.message || 'Error al registrar usuario.')
+      }
+      _setSession(data.token, data.usuario)
       successMessage.value = data.message || '¡Cuenta creada con éxito!'
       _autoClearMessages()
       return true
@@ -130,7 +136,7 @@ export const useAuthStore = defineStore('auth', () => {
     loading.value = true
     try {
       const data = await getMeService()
-      user.value = data.user || data
+      user.value = data.usuario || data
       localStorage.setItem('auth_user', JSON.stringify(user.value))
       return true
     } catch {
@@ -155,10 +161,10 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       const data = await updateProfileService(profileData)
       // Actualizar datos locales
-      user.value = data.user || { ...user.value, ...profileData }
+      user.value = data.usuario|| { ...user.value, ...profileData }
       // Si subió foto, no guardamos el File, sino la URL que devuelve el backend
-      if (data.user) {
-        localStorage.setItem('auth_user', JSON.stringify(data.user))
+      if (data.usuario) {
+        localStorage.setItem('auth_user', JSON.stringify(data.usuario))
       } else {
         const updated = { ...user.value }
         delete updated.foto // No guardar File en localStorage

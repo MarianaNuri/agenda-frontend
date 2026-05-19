@@ -12,7 +12,7 @@ import { apiRequest } from '@/api/api'
  * @returns {Promise<Array>} Lista de contactos
  */
 export async function getContactsService() {
-  const data = await apiRequest('/contacts/index.php', {
+  const data = await apiRequest('/contactos/index.php', {
     method: 'GET',
     auth: true,
   })
@@ -26,7 +26,7 @@ export async function getContactsService() {
  * @returns {Promise<Object>} Datos del contacto
  */
 export async function getContactByIdService(id) {
-  const data = await apiRequest(`/contacts/detalle.php?id=${id}`, {
+  const data = await apiRequest(`/contactos/detalle.php?id=${id}`, {
     method: 'GET',
     auth: true,
   })
@@ -50,7 +50,7 @@ export async function createContactService(contactData) {
     formData.append('foto', contactData.foto)
   }
 
-  const data = await apiRequest('/contacts/crear.php', {
+  const data = await apiRequest('/contactos/crear.php', {
     method: 'POST',
     body: formData,
     auth: true,
@@ -76,7 +76,7 @@ export async function updateContactService(id, contactData) {
     formData.append('foto', contactData.foto)
   }
 
-  const data = await apiRequest(`/contacts/actualizar.php?id=${id}`, {
+  const data = await apiRequest(`/contactos/actualizar.php?id=${id}`, {
     method: 'POST',
     body: formData,
     auth: true,
@@ -90,7 +90,7 @@ export async function updateContactService(id, contactData) {
  * @returns {Promise<Object>}
  */
 export async function deleteContactService(id) {
-  const data = await apiRequest(`/contacts/eliminar.php?id=${id}`, {
+  const data = await apiRequest(`/contactos/eliminar.php?id=${id}`, {
     method: 'DELETE',
     auth: true,
   })
