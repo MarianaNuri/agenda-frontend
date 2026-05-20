@@ -49,6 +49,7 @@ export async function getContactByIdService(id, userId) {
 export async function createContactService(contactData, userId) {
   const formData = new FormData()
   formData.append('nombre', contactData.nombre || '')
+  formData.append('apellido', contactData.apellido || '')
   formData.append('telefono', contactData.telefono || '')
   formData.append('email', contactData.email || '')
   formData.append('direccion', contactData.direccion || '')
@@ -77,6 +78,7 @@ export async function updateContactService(id, contactData, userId) {
   const formData = new FormData()
   formData.append('id', id) // Mandamos el ID del contacto en el cuerpo
   formData.append('nombre', contactData.nombre || '')
+  formData.append('apellido', contactData.apellido || '')
   formData.append('telefono', contactData.telefono || '')
   formData.append('email', contactData.email || '')
   formData.append('direccion', contactData.direccion || '')
