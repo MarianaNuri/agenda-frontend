@@ -39,16 +39,19 @@ onMounted(async () => {
  * Prioriza la foto del backend, con fallback a ui-avatars.
  */
 const avatarUrl = computed(() => {
-  // Si estamos editando y hay preview, mostrar esa
+  // 1. Si estamos editando y hay preview local, mostrar esa
   if (editFotoPreview.value) return editFotoPreview.value
 
-  // Si el usuario tiene foto del backend
+  // 2. Si el usuario tiene foto del backend
   if (auth.userPhoto) {
+    // Si ya viene como URL completa (lo que configuramos en PHP), regresarla tal cual
     if (auth.userPhoto.startsWith('http')) return auth.userPhoto
+    
+    // Si solo viniera el nombre, concatenar la base (por seguridad)
     return `${photoBaseUrl.value}/${auth.userPhoto.replace(/^\/+/, '')}`
   }
 
-  // Fallback a ui-avatars
+  // 3. Fallback a ui-avatars
   const name = encodeURIComponent(auth.userName)
   return `https://ui-avatars.com/api/?name=${name}&background=0044FF&color=fff&size=130`
 })
