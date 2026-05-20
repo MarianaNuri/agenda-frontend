@@ -42,13 +42,13 @@ const avatarUrl = computed(() => {
   // 1. Si estamos editando y hay preview local, mostrar esa
   if (editFotoPreview.value) return editFotoPreview.value
 
-  // 2. Si el usuario tiene foto del backend
+  // 2. Si el usuario tiene foto, construir la URL absoluta hacia AlwaysData
   if (auth.userPhoto) {
-    // Si ya viene como URL completa (lo que configuramos en PHP), regresarla tal cual
+    // Si ya es una URL completa, devolverla
     if (auth.userPhoto.startsWith('http')) return auth.userPhoto
     
-    // Si solo viniera el nombre, concatenar la base (por seguridad)
-    return `${photoBaseUrl.value}/${auth.userPhoto.replace(/^\/+/, '')}`
+    // Si es solo el nombre, forzar la ruta completa hacia AlwaysData
+    return `https://sistemas-agenda.alwaysdata.net/api/uploads/usuarios/${auth.userPhoto}`
   }
 
   // 3. Fallback a ui-avatars
