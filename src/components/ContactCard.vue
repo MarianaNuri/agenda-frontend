@@ -24,6 +24,8 @@ const defaultPhoto = 'https://ui-avatars.com/api/?name=Sin+Foto&background=0044F
     <!-- Nombre -->
     <h2 class="detail-name">{{ contacto.nombre }}</h2>
 
+    <h2 class="detail-apellido">{{ contacto.apellido }}</h2>
+
     <!-- Info -->
     <div class="detail-info">
       <div class="detail-row" v-if="contacto.telefono">

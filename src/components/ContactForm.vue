@@ -23,6 +23,7 @@ const emit = defineEmits(['submit'])
 
 const form = ref({
   nombre: '',
+  apellido: '',
   telefono: '',
   email: '',
   direccion: '',
@@ -41,6 +42,7 @@ watch(
     if (val && Object.keys(val).length) {
       form.value = {
         nombre: val.nombre || '',
+        apellido: val.apellido || '',
         telefono: val.telefono || '',
         email: val.email || '',
         direccion: val.direccion || '',
@@ -78,6 +80,7 @@ function handleSubmit() {
   // Validaciones
   const validationError = validateAll([
     required(form.value.nombre, 'El nombre'),
+    required(form.value.apellido, 'El apellido'),
     emailValidator(form.value.email),
     phone(form.value.telefono),
   ])
@@ -120,7 +123,18 @@ function handleSubmit() {
           v-model="form.nombre"
           type="text"
           id="form-nombre"
-          placeholder="Nombre completo"
+          placeholder="Nombre"
+          required
+        />
+      </div>
+      <!--Apellido-->>
+      <div class="form-group">
+        <label for="form-nombre">Apellido</label>
+        <input
+          v-model="form.apellido"
+          type="text"
+          id="form-apellido"
+          placeholder="Apellido"
           required
         />
       </div>

@@ -39,10 +39,8 @@ export async function apiRequest(endpoint, {
 
   if (body) {
     if (body instanceof FormData) {
-      // FormData: el navegador pone el Content-Type con boundary automáticamente
       fetchOptions.body = body
     } else {
-      // JSON
       finalHeaders['Content-Type'] = 'application/json'
       fetchOptions.body = JSON.stringify(body)
     }

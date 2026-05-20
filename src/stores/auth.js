@@ -1,5 +1,5 @@
 /**
- * src/stores/auth.js
+ * src/stogisters/auth.js
  *
  * Store Pinia de contactos.
  * Reemplaza los datos demo por consumo real del backend via API REST.
@@ -147,7 +147,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     loading.value = true
     try {
-      // 🔍 Pasamos el ID del usuario actual al servicio de perfil
+      // Pasamos el ID del usuario actual al servicio de perfil
       const userId = user.value?.id || 1
       const data = await getMeService(userId)
       
