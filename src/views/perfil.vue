@@ -39,16 +39,19 @@ onMounted(async () => {
  * Prioriza la foto del backend, con fallback a ui-avatars.
  */
 const avatarUrl = computed(() => {
-  // Si estamos editando y hay preview, mostrar esa
+  // 1. Si estamos editando y hay preview local, mostrar esa
   if (editFotoPreview.value) return editFotoPreview.value
 
-  // Si el usuario tiene foto del backend
+  // 2. Si el usuario tiene foto, construir la URL absoluta hacia AlwaysData
   if (auth.userPhoto) {
+    // Si ya es una URL completa, devolverla
     if (auth.userPhoto.startsWith('http')) return auth.userPhoto
-    return `${photoBaseUrl.value}/${auth.userPhoto.replace(/^\/+/, '')}`
+    
+    // Si es solo el nombre, forzar la ruta completa hacia AlwaysData
+    return `https://sistemas-agenda.alwaysdata.net/api/uploads/usuarios/${auth.userPhoto}`
   }
 
-  // Fallback a ui-avatars
+  // 3. Fallback a ui-avatars
   const name = encodeURIComponent(auth.userName)
   return `https://ui-avatars.com/api/?name=${name}&background=0044FF&color=fff&size=130`
 })
