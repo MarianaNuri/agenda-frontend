@@ -21,7 +21,6 @@ const localError = ref('')
 
 async function handleLogin() {
   localError.value = ''
-
   // Validaciones del formulario
   const validationError = validateAll([
     required(nombre_de_usuario.value, 'El nombre_de_usuario'),

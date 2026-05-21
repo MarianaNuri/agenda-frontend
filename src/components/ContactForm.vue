@@ -127,7 +127,7 @@ function handleSubmit() {
           required
         />
       </div>
-      <!--Apellido-->>
+      <!--Apellido-->
       <div class="form-group">
         <label for="form-nombre">Apellido</label>
         <input
