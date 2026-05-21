@@ -209,6 +209,7 @@ async function updateProfile(profileData) {
 
   /**
 /**
+/**
    * Construye la URL completa de una foto del servidor de manera dinámica.
    * @param {string} relativePath
    * @returns {string}
@@ -217,7 +218,8 @@ async function updateProfile(profileData) {
     if (!relativePath) return ''
     if (relativePath.startsWith('http')) return relativePath
   
-    return `http://proyectou5agenda.atwebpages.com/api/uploads/usuarios/${relativePath.replace(/^\/+/, '')}`
+    //Cambiado al domini de AlwaysData
+    return `https://sistemas-agenda.alwaysdata.net/api/uploads/usuarios/${relativePath.replace(/^\/+/, '')}`
   }
 
   return {
