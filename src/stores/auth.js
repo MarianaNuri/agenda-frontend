@@ -75,6 +75,9 @@ export const useAuthStore = defineStore('auth', () => {
 
     try {
       const data = await loginService(nombre_de_usuario, password)
+      if (!data) {
+        throw new Error('El servidor no devolvió una respuesta válida.')
+      }
       if (!data.success) {
         throw new Error(data.message || 'Error al iniciar sesión.')
       }
@@ -104,8 +107,14 @@ export const useAuthStore = defineStore('auth', () => {
 
     try {
       const data = await registerService(nombre_de_usuario, password)
+      if (!data) {
+        throw new Error('El servidor no devolvió una respuesta válida. Verifica que el backend esté configurado correctamente.')
+      }
       if (!data.success) {
         throw new Error(data.message || 'Error al registrar usuario.')
+      }
+      if (!data.token || !data.usuario) {
+        throw new Error('El registro fue exitoso pero el servidor no devolvió los datos de sesión. Intenta iniciar sesión manualmente.')
       }
       _setSession(data.token, data.usuario)
       successMessage.value = data.message || '¡Cuenta creada con éxito!'
