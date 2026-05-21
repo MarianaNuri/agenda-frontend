@@ -54,8 +54,18 @@ export async function apiRequest(endpoint, {
     const contentType = response.headers.get('content-type')
     if (contentType && contentType.includes('application/json')) {
       data = await response.json()
+    } else {
+      // Fallback: intentar parsear como JSON aunque el header no lo indique,
+      // ya que algunos backends no envían Content-Type correctamente.
+      try {
+        const text = await response.text()
+        if (text && text.trim()) {
+          data = JSON.parse(text)
+        }
+      } catch {
+        // No es JSON válido, data queda null
+      }
     }
-
     // Si la respuesta no es exitosa, lanzar error
     if (!response.ok) {
       // Manejo especial para 401: token expirado o inválido
