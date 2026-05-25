@@ -131,4 +131,3 @@ export async function deleteContactService(id, userId) {
   })
   return data
 }
-
