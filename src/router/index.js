@@ -60,6 +60,13 @@ const router = createRouter({
       component: () => import('../views/EditarContacto.vue'),
       meta: { requiresAuth: true },
     },
+    // Página para ver los detalles de un contacto — PROTEGIDA.
+    {
+      path: '/agenda/ver/:id',
+      name: 'ver',
+      component: () => import('../views/VerContacto.vue'),
+      meta: { requiresAuth: true },
+    },
     // Página del perfil del usuario — PROTEGIDA: permite ver/editar los datos de la cuenta.
     {
       path: '/perfil',

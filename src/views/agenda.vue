@@ -201,6 +201,14 @@ function cancelDelete() {
               <div class="contact-actions">
                 <RouterLink
                   v-if="contact.id"
+                  :to="{ name: 'ver', params: { id: contact.id } }"
+                  class="btn-action btn-view"
+                  title="Ver detalles"
+                >
+                  <i class="fa-solid fa-eye"></i>
+                </RouterLink>
+                <RouterLink
+                  v-if="contact.id"
                   :to="{ name: 'editar', params: { id: contact.id } }"
                   class="btn-action btn-edit"
                   title="Editar"
