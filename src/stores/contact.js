@@ -232,16 +232,14 @@ function buildPhotoUrl(relativePath) {
   
   const base = photoBaseUrl.value || ''
   
-  // Parche para backends de otros equipos:
-  // Si el backend ajeno manda una URL completa (quemada), extraemos solo el nombre 
-  // del archivo (lo que está después de la última barra '/') para forzar el dominio correcto.
-  if (relativePath.startsWith('http')) {
-    const filename = relativePath.split('/').pop()
-    return `${base}/uploads/contactos/${filename}`
-  }
-
-  // Comportamiento normal (si el backend manda solo el nombre de archivo)
-  return `${base}/uploads/contactos/${relativePath.replace(/^\/+/, '')}`
+  // PARCHE DEFINITIVO ANTI-BACKENDS AJENOS:
+  // No importa si el backend de tu compañero manda "foto.jpg", 
+  // "uploads/contactos/foto.jpg" (como Alberto) o una URL completa.
+  // Siempre extraemos el nombre puro del archivo (lo que está al final del último '/')
+  // y armamos la ruta correcta nosotros mismos.
+  const filename = relativePath.split('/').pop()
+  
+  return `${base}/uploads/contactos/${filename}`
 }
   
   // Se exponen todos los datos y funciones para que los componentes de la app puedan usarlos
