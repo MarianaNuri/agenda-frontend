@@ -1,9 +1,20 @@
+<!-- 
+  ContactForm.vue — Formulario reutilizable de contactos de la agenda.
+  Este componente se usa tanto para CREAR un nuevo contacto como para EDITAR uno existente.
+  La vista padre decide el modo pasándole las propiedades adecuadas (título, datos iniciales, etc.).
+-->
 <script setup>
 
 import { ref, watch } from 'vue'
 import { RouterLink } from 'vue-router'
 import { required, email as emailValidator, phone, validateAll } from '@/utils/validators'
 
+// Propiedades que recibe este formulario desde la vista padre (crear o editar contacto)
+// - titulo: el encabezado del formulario, por ejemplo "Crear Contacto" o "Editar Contacto"
+// - contactoInicial: datos del contacto existente cuando se está editando
+// - textoBoton: texto que aparece en el botón de guardar
+// - loading: indica si se está procesando la petición al servidor
+// - error / successMessage: mensajes de retroalimentación para el usuario
 const props = defineProps({
   /** Título del formulario (ej: "Crear Contacto", "Editar Contacto") */
   titulo: { type: String, default: 'Contacto' },
@@ -19,8 +30,10 @@ const props = defineProps({
   successMessage: { type: String, default: '' },
 })
 
+// Evento que se emite a la vista padre cuando el usuario envía el formulario
 const emit = defineEmits(['submit'])
 
+// Campos del formulario de contacto: nombre, apellido, teléfono, email, dirección, notas y foto
 const form = ref({
   nombre: '',
   apellido: '',
@@ -31,10 +44,13 @@ const form = ref({
   foto: null,
 })
 
+// Nombre del archivo de foto seleccionado y vista previa de la imagen
 const fileName = ref('')
 const fotoPreview = ref('')
 const localError = ref('')
 
+// Cuando se edita un contacto, este observador rellena automáticamente el formulario
+// con los datos del contacto existente para que el usuario los pueda modificar
 /* Cargar datos iniciales (modo edición) */
 watch(
   () => props.contactoInicial,
@@ -60,6 +76,8 @@ watch(
   { immediate: true }
 )
 
+// Cuando el usuario selecciona una foto, se genera una vista previa
+// para que pueda verla antes de guardar el contacto
 function onFileChange(e) {
   const file = e.target.files[0]
   if (file) {
@@ -74,6 +92,8 @@ function onFileChange(e) {
   }
 }
 
+// Valida los campos obligatorios (nombre y apellido) y el formato del email y teléfono
+// antes de enviar los datos del contacto a la vista padre
 function handleSubmit() {
   localError.value = ''
 
@@ -98,6 +118,7 @@ function handleSubmit() {
   <div class="card" id="contact-form-card">
     <h2>{{ titulo }}</h2>
 
+    <!-- Mensajes de éxito o error que se muestran al usuario después de una acción -->
     <!-- Mensajes de feedback -->
     <Transition name="slide-up">
       <p v-if="successMessage" class="detail-label" style="color: #51cf66; text-align: center; margin-bottom: 1rem; text-transform: none; letter-spacing: 0;">
@@ -110,12 +131,14 @@ function handleSubmit() {
       </p>
     </Transition>
 
+    <!-- Vista previa de la foto del contacto (se muestra si ya tiene una o si el usuario seleccionó una nueva) -->
     <!-- Preview de foto -->
     <div v-if="fotoPreview" class="detail-photo" style="margin-bottom: 1rem;">
       <img :src="fotoPreview" alt="Preview de foto" style="max-width: 130px; max-height: 130px; border-radius: 50%; object-fit: cover;" />
     </div>
 
     <form @submit.prevent="handleSubmit">
+      <!-- Campo obligatorio: nombre del contacto -->
       <!-- Nombre -->
       <div class="form-group">
         <label for="form-nombre">Nombre</label>
@@ -127,6 +150,7 @@ function handleSubmit() {
           required
         />
       </div>
+      <!-- Campo obligatorio: apellido del contacto -->
       <!--Apellido-->
       <div class="form-group">
         <label for="form-nombre">Apellido</label>
@@ -139,6 +163,7 @@ function handleSubmit() {
         />
       </div>
 
+      <!-- Campo opcional: número de teléfono del contacto -->
       <!-- Teléfono -->
       <div class="form-group">
         <label for="form-telefono">Teléfono</label>
@@ -150,6 +175,7 @@ function handleSubmit() {
         />
       </div>
 
+      <!-- Campo opcional: correo electrónico del contacto (se valida el formato) -->
       <!-- Email -->
       <div class="form-group">
         <label for="form-email">Email</label>
@@ -161,6 +187,7 @@ function handleSubmit() {
         />
       </div>
 
+      <!-- Campo opcional: dirección física del contacto -->
       <!-- Dirección -->
       <div class="form-group">
         <label for="form-direccion">Dirección</label>
@@ -172,6 +199,7 @@ function handleSubmit() {
         />
       </div>
 
+      <!-- Campo opcional: notas o comentarios adicionales sobre el contacto -->
       <!-- Notas -->
       <div class="form-group">
         <label for="form-notas">Notas</label>
@@ -182,6 +210,7 @@ function handleSubmit() {
         ></textarea>
       </div>
 
+      <!-- Selector de foto con apariencia personalizada para mejor presentación visual -->
       <!-- Foto -->
       <div class="form-group">
         <label>Foto</label>
@@ -197,6 +226,7 @@ function handleSubmit() {
         </div>
       </div>
 
+      <!-- Botón para guardar el contacto (muestra animación de carga mientras se procesa) -->
       <!-- Botón -->
       <button type="submit" class="btn-submit" id="btn-form-submit" :disabled="loading">
         <span v-if="loading">
@@ -206,6 +236,7 @@ function handleSubmit() {
       </button>
     </form>
 
+    <!-- Enlace para regresar a la lista de contactos de la agenda -->
     <!-- Volver -->
     <RouterLink to="/agenda" class="back-link">
       <span class="arrow">&larr;</span>

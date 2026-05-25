@@ -5,6 +5,10 @@
  * Vista de perfil del usuario autenticado.
  * Permite ver y editar datos del perfil, subir foto y cerrar sesión.
  * Conecta con el backend via el store de autenticación.
+ *
+ * Esta página tiene dos modos:
+ * - MODO VISTA: muestra la información del usuario con botones para editar o cerrar sesión
+ * - MODO EDICIÓN: muestra un formulario para cambiar el nombre de usuario y la foto de perfil
  */
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
@@ -15,15 +19,18 @@ import {
   validateAll,
 } from '@/utils/validators'
 
+// Conexión con el almacén de autenticación y el enrutador de la aplicación
 const auth = useAuthStore()
 const router = useRouter()
 
+// Estado del perfil: controla si se está editando y guarda los valores temporales
 const isEditing = ref(false)
 const editNombreUsuario = ref('')
 const editFoto = ref(null)
 const editFotoPreview = ref('')
 const photoBaseUrl = ref('')
 
+// Al cargar la página, se obtienen los datos más recientes del usuario desde el servidor
 /* Cargar datos frescos del usuario al montar */
 onMounted(async () => {
   await auth.fetchUser()
@@ -34,6 +41,8 @@ onMounted(async () => {
   }
 })
 
+// Genera la URL de la foto de perfil del usuario
+// Si el usuario tiene foto, la muestra; si no, genera un avatar con sus iniciales
 /**
  * Construye la URL del avatar del usuario.
  * Prioriza la foto del backend, con fallback a ui-avatars.
@@ -51,11 +60,13 @@ const avatarUrl = computed(() => {
     return `https://sistemas-agenda.alwaysdata.net/api/uploads/usuarios/${auth.userPhoto}`
   }
 
-  // 3. Fallback a ui-avatars
+  // 3. Si no tiene foto, se genera un avatar automático con las iniciales del usuario
+  // Fallback a ui-avatars
   const name = encodeURIComponent(auth.userName)
   return `https://ui-avatars.com/api/?name=${name}&background=0044FF&color=fff&size=130`
 })
 
+// Activa el modo edición y carga los datos actuales del usuario en el formulario
 function startEdit() {
   editNombreUsuario.value = auth.userName
   editFoto.value = null
@@ -63,6 +74,8 @@ function startEdit() {
   isEditing.value = true
 }
 
+// Cuando el usuario selecciona una nueva foto de perfil, se genera una vista previa
+// para que pueda verla antes de guardar los cambios
 function onFotoChange(e) {
   const file = e.target.files[0]
   if (file) {
@@ -76,6 +89,8 @@ function onFotoChange(e) {
   }
 }
 
+// Guarda los cambios del perfil: valida que el nombre de usuario no esté vacío
+// y envía los datos actualizados (nombre y foto) al servidor
 async function saveProfile() {
   // Limpiar error previo
   auth.error = ''
@@ -111,11 +126,13 @@ async function saveProfile() {
   }
 }
 
+// Cancela la edición y vuelve al modo vista sin guardar cambios
 function cancelEdit() {
   isEditing.value = false
   editFotoPreview.value = ''
 }
 
+// Cierra la sesión del usuario y lo redirige a la página de inicio de sesión
 async function handleLogout() {
   await auth.logout()
   router.push('/login')
@@ -126,6 +143,7 @@ async function handleLogout() {
   <div class="card card-detail" id="perfil-card" style="margin: 2rem auto;">
     <h2>Mi Perfil</h2>
 
+    <!-- Mensajes de éxito o error después de guardar cambios en el perfil -->
     <!-- Mensajes de feedback -->
     <Transition name="slide-up">
       <p v-if="auth.successMessage" class="detail-label" style="color: #51cf66; text-align: center; margin-bottom: 1rem; text-transform: none; letter-spacing: 0;">
@@ -138,16 +156,19 @@ async function handleLogout() {
       </p>
     </Transition>
 
+    <!-- Foto de perfil del usuario (o avatar generado con iniciales si no tiene foto) -->
     <!-- Avatar -->
     <div class="detail-photo">
       <img :src="avatarUrl" :alt="auth.userName" />
     </div>
 
+    <!-- Indicador de carga mientras se obtienen los datos del usuario -->
     <!-- Loading -->
     <div v-if="auth.loading && !isEditing" style="text-align: center; padding: 1rem;">
       <i class="fa-solid fa-spinner fa-spin" style="font-size: 1.5rem; color: #55AAFF;"></i>
     </div>
 
+    <!-- MODO VISTA: muestra la información del usuario y los botones de acción -->
     <!-- Modo visualización -->
     <template v-if="!isEditing && !auth.loading">
       <h3 class="detail-name">{{ auth.userName }}</h3>
@@ -162,11 +183,13 @@ async function handleLogout() {
         </div>
       </div>
 
+      <!-- Botones para editar el perfil o cerrar sesión -->
       <div class="contact-actions" style="gap: .75rem; flex-wrap: wrap; justify-content: center; margin-top: 1rem;">
         <button class="btn-new-contact" id="btn-edit-profile" @click="startEdit" style="border: none;">
           <i class="fa-solid fa-pen"></i>
           <span>Editar Perfil</span>
         </button>
+        <!-- Botón de cerrar sesión: termina la sesión y redirige al login -->
         <button class="btn-action btn-delete" id="btn-logout" @click="handleLogout" title="Cerrar sesión" style="width: auto; height: auto; padding: .65rem 1.3rem; border-radius: 12px; font-size: .9rem; border: none;">
           <i class="fa-solid fa-right-from-bracket"></i>
           Cerrar Sesión
@@ -174,14 +197,17 @@ async function handleLogout() {
       </div>
     </template>
 
+    <!-- MODO EDICIÓN: formulario para cambiar el nombre de usuario y la foto de perfil -->
     <!-- Modo edición -->
     <template v-if="isEditing">
       <form @submit.prevent="saveProfile" style="margin-top: 1rem;">
+        <!-- Campo para modificar el nombre de usuario -->
         <div class="form-group">
           <label for="edit-nombre_de_usuario">Nombre de usuario</label>
           <input v-model="editNombreUsuario" type="text" id="edit-nombre_de_usuario" required />
         </div>
 
+        <!-- Selector de foto de perfil con vista previa antes de guardar -->
         <!-- Foto de perfil -->
         <div class="form-group">
           <label>Foto de perfil</label>
@@ -197,6 +223,7 @@ async function handleLogout() {
           </div>
         </div>
 
+        <!-- Botones para guardar los cambios o cancelar la edición -->
         <div class="contact-actions" style="gap: .75rem; justify-content: center; margin-top: 1rem;">
           <button type="submit" class="btn-submit" id="btn-save-profile" :disabled="auth.loading">
             <span v-if="auth.loading">

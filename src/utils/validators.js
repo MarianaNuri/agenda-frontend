@@ -1,9 +1,8 @@
-/**
- * src/utils/validators.js
- *
- * Funciones de validación reutilizables para formularios.
- * Cada función devuelve un string con el mensaje de error o null si es válido.
- */
+// VALIDACIONES DE FORMULARIOS DE LA AGENDA
+// Este archivo contiene funciones que verifican los datos que el usuario escribe
+// en los formularios de login, registro y contactos, ANTES de enviarlos al servidor.
+// Así se evitan solicitudes innecesarias con datos incompletos o incorrectos.
+
 
 /**
  * Valida que el campo no esté vacío.
@@ -18,6 +17,8 @@ export function required(value, fieldName = 'Este campo') {
   return null
 }
 
+// Verifica que el correo electrónico tenga un formato válido (como correo@ejemplo.com).
+// Se usa en el formulario de login, registro y al guardar contactos con email.
 /**
  * Valida formato de email.
  * @param {string} value
@@ -32,8 +33,9 @@ export function email(value) {
   return null
 }
 
+// Verifica que las contraseñas tengan al menos la cantidad mínima de caracteres.
+// Esto ayuda a que los usuarios creen contraseñas más seguras al registrarse.
 /**
- * Valida longitud mínima.
  * @param {string} value
  * @param {number} min
  * @param {string} fieldName
@@ -46,8 +48,9 @@ export function minLength(value, min, fieldName = 'Este campo') {
   return null
 }
 
+// Verifica que la contraseña y la confirmación de contraseña sean idénticas.
+// Se usa en el formulario de registro para evitar errores de escritura.
 /**
- * Valida que dos valores coincidan (ej. contraseñas).
  * @param {string} value
  * @param {string} confirmValue
  * @returns {string|null}
@@ -59,8 +62,9 @@ export function matches(value, confirmValue) {
   return null
 }
 
+// Verifica que los números de teléfono de los contactos tengan al menos 7 dígitos.
+// Permite formatos con guiones, espacios, paréntesis y el signo +.
 /**
- * Valida formato de teléfono (mínimo 7 dígitos, permite guiones, espacios, paréntesis y +).
  * @param {string} value
  * @returns {string|null}
  */
@@ -73,17 +77,10 @@ export function phone(value) {
   return null
 }
 
+// Ejecuta todas las validaciones de un formulario de una sola vez y devuelve
+// el primer error encontrado. Los formularios de login, registro y contactos
+// usan esta función para validar todos los campos antes de enviar los datos.
 /**
- * Ejecuta un array de validaciones y devuelve el primer error encontrado o null.
- * Cada elemento del array debe ser el resultado de una función de validación.
- *
- * Ejemplo:
- *   const err = validateAll([
- *     required(nombre, 'El nombre'),
- *     email(correo),
- *     minLength(password, 6, 'La contraseña'),
- *   ])
- *
  * @param {Array<string|null>} validations
  * @returns {string|null}
  */

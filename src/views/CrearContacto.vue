@@ -1,19 +1,19 @@
 <script setup>
-/**
- * views/CrearContacto.vue
- *
- * Vista para crear un nuevo contacto.
- * Conecta con el backend via el store de contactos.
- */
+
+// Se importan las herramientas de navegación y el formulario reutilizable de contactos
 import { useRouter } from 'vue-router'
 import { useContactStore } from '@/stores/contact'
 import ContactForm from '@/components/ContactForm.vue'
 
-const store = useContactStore()
+// Se conecta con el almacén de contactos y la navegación
+const store = useContactStore() //Conecta con el backend via el store de contactos.
 const router = useRouter()
 
+// Esta función se ejecuta cuando el usuario completa el formulario y presiona "Crear"
+// Envía los datos del nuevo contacto al servidor para guardarlo en la agenda
 async function handleCreate(data) {
   const success = await store.addContact(data)
+  // Si se guardó correctamente, redirige al usuario a la lista de contactos
   if (success) {
     router.push('/agenda')
   }
@@ -22,6 +22,8 @@ async function handleCreate(data) {
 </script>
 
 <template>
+  <!-- Se usa el componente reutilizable ContactForm configurado para crear un contacto nuevo -->
+  <!-- El formulario muestra los campos vacíos y el botón dice "Crear" -->
   <ContactForm
     titulo="Nuevo Contacto"
     texto-boton="Crear"
@@ -31,3 +33,4 @@ async function handleCreate(data) {
     @submit="handleCreate"
   />
 </template>
+
