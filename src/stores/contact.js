@@ -229,13 +229,15 @@ export const useContactStore = defineStore('contacts', () => {
  */
 function buildPhotoUrl(relativePath) {
   if (!relativePath) return ''
-  if (relativePath.startsWith('http')) return relativePath
   
-  // Usa la URL dinámica del config.json en lugar de una URL fija
   const base = photoBaseUrl.value || ''
   
-  // Comportamiento normal: asume que relativePath es solo el nombre de la foto
-  return `${base}/uploads/contactos/${relativePath.replace(/^\/+/, '')}`
+  // PARCHE PARA COMPATIBILIDAD CON OTROS BACKENDS:
+  // Siempre extraemos el nombre puro del archivo (lo que está después de la última '/')
+  // Así ignoramos si el backend manda "foto.jpg" o "uploads/contactos/foto.jpg" o URLs quemadas
+  const filename = relativePath.split('/').pop()
+  
+  return `${base}/uploads/contactos/${filename}`
 }
   
   // Se exponen todos los datos y funciones para que los componentes de la app puedan usarlos
