@@ -51,13 +51,19 @@ const avatarUrl = computed(() => {
   // 1. Si estamos editando y hay preview local, mostrar esa
   if (editFotoPreview.value) return editFotoPreview.value
 
-  // 2. Si el usuario tiene foto, construir la URL absoluta hacia AlwaysData
-  if (auth.userPhoto && typeof auth.userPhoto === 'string') {
-    // Si ya es una URL completa, devolverla
-    if (auth.userPhoto.startsWith('http')) return auth.userPhoto
-    
-    // Si es solo el nombre, usar buildPhotoUrl del store si es posible, o armarla manual
-    return auth.buildPhotoUrl ? auth.buildPhotoUrl(auth.userPhoto) : `https://sistemas-agenda.alwaysdata.net/api/uploads/usuarios/${auth.userPhoto.replace(/^\/+/, '')}`
+  // 2. Si el usuario tiene foto, procesarla según su tipo
+  if (auth.userPhoto) {
+    if (typeof auth.userPhoto === 'string') {
+      // Si ya es una URL completa, devolverla
+      if (auth.userPhoto.startsWith('http')) return auth.userPhoto
+      
+      // Si es solo el nombre, usar buildPhotoUrl del store si es posible, o armarla manual
+      return auth.buildPhotoUrl ? auth.buildPhotoUrl(auth.userPhoto) : `https://sistemas-agenda.alwaysdata.net/api/uploads/usuarios/${auth.userPhoto.replace(/^\/+/, '')}`
+    } else if (auth.userPhoto instanceof File) {
+      // Si el backend no devolvió la URL de la foto (o devolvió el mismo archivo crudo),
+      // creamos una URL temporal local para que el usuario al menos vea lo que subió.
+      return URL.createObjectURL(auth.userPhoto)
+    }
   }
 
   // 3. Si no tiene foto, se genera un avatar automático con las iniciales del usuario
