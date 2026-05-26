@@ -67,8 +67,8 @@ watch(
       }
       // Si el contacto tiene foto existente, mostrar preview
       if (val.foto) {
-        fotoPreview.value = val.foto.startsWith('http')
-          ? val.foto
+        fotoPreview.value = (typeof val.foto === 'string' && val.foto.startsWith('http')) 
+          ? val.foto 
           : val.foto // Se resolverá con la URL base en la vista padre
       }
     }

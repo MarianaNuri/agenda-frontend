@@ -52,12 +52,12 @@ const avatarUrl = computed(() => {
   if (editFotoPreview.value) return editFotoPreview.value
 
   // 2. Si el usuario tiene foto, construir la URL absoluta hacia AlwaysData
-  if (auth.userPhoto) {
+  if (auth.userPhoto && typeof auth.userPhoto === 'string') {
     // Si ya es una URL completa, devolverla
     if (auth.userPhoto.startsWith('http')) return auth.userPhoto
     
-    // Si es solo el nombre, forzar la ruta completa hacia AlwaysData
-    return `https://sistemas-agenda.alwaysdata.net/api/uploads/usuarios/${auth.userPhoto}`
+    // Si es solo el nombre, usar buildPhotoUrl del store si es posible, o armarla manual
+    return auth.buildPhotoUrl ? auth.buildPhotoUrl(auth.userPhoto) : `https://sistemas-agenda.alwaysdata.net/api/uploads/usuarios/${auth.userPhoto.replace(/^\/+/, '')}`
   }
 
   // 3. Si no tiene foto, se genera un avatar automático con las iniciales del usuario
